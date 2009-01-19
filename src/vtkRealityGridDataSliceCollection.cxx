@@ -40,3 +40,7 @@ vtkRealityGridDataSliceCollection::~vtkRealityGridDataSliceCollection() {
     this->GetDataSlice(i)->Delete();
   }
 }
+
+void vtkRealityGridDataSliceCollection::SetName(const char* n) {
+  this->name = (char*) n;
+}

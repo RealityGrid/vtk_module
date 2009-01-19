@@ -235,6 +235,7 @@ void vtkRealityGridDataReader::RegisterIOChannel(const char* name, vtkRealityGri
   int status;
   status = Register_IOType((char*) name, dir, freq, &io_handles[num_io_handles]);
   if(status == REG_SUCCESS) {
+    slices[num_io_handles]->SetName(name);
     num_io_handles++;
   }
 }
