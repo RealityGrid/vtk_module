@@ -231,7 +231,7 @@ void vtkRealityGridDataReader::FinalizeRealityGrid() {
 
 // Register an IO channel
 // TODO: check bounds of io_handles[]
-void vtkRealityGridDataReader::RegisterInputChannel(const char* name, vtkRealityGridDataReader::IODir dir, int freq) {
+void vtkRealityGridDataReader::RegisterIOChannel(const char* name, vtkRealityGridDataReader::IODir dir, int freq) {
   int status;
   status = Register_IOType((char*) name, dir, freq, &io_handles[num_io_handles]);
   if(status == REG_SUCCESS) {

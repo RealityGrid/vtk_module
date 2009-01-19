@@ -98,7 +98,7 @@ class vtkRealityGridDataReader : public vtkObject {
 
   void SetInteractor(vtkRenderWindowInteractor*);
 
-  void RegisterInputChannel(const char*, vtkRealityGridDataReader::IODir, int);
+  void RegisterIOChannel(const char*, vtkRealityGridDataReader::IODir, int);
 
   friend void _poll(vtkObject*, unsigned long, void*, void*);
 };
