@@ -47,6 +47,7 @@ class vtkRealityGridDataSliceCollection : public vtkCollection {
  public:
   static vtkRealityGridDataSliceCollection* New();
   vtkTypeRevisionMacro(vtkRealityGridDataSliceCollection,vtkCollection);
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
   // Add a data slice to the list.

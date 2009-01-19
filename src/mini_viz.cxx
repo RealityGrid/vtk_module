@@ -55,8 +55,6 @@ struct UserData {
 void redrawCallback(vtkRealityGridDataSliceCollection**, void*);
 
 int main(int argc, char** argv) {
-  vtkIndent* indenter = vtkIndent::New();
-
   vtkPolyData* surface = vtkPolyData::New();
 
   // calculate normals of surface
@@ -112,7 +110,7 @@ int main(int argc, char** argv) {
   reader->SetUpdateUserData((void*) ud);
   reader->SetInteractor(reni);
 
-  reader->PrintSelf(std::cout, *indenter);
+  reader->Print(std::cout);
 
   reni->Start();
 

@@ -76,10 +76,20 @@ vtkRealityGridDataReader::~vtkRealityGridDataReader() {
 }
 
 void vtkRealityGridDataReader::PrintSelf(ostream& os, vtkIndent indent) {
-  os << indent << "vtkRealityGridDataReader (" << this << ")\n";
-  indent = indent.GetNextIndent();
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Interactor: " << (interactor == NULL ? "not set" : "set") << "\n";
+  os << indent << "Update Callback: " << (update_callback == NULL ? "not set" : "set") << "\n";
+  os << indent << "Input Channels: ";
+  if(num_io_handles > 0) {
+    os << num_io_handles << std::endl;
+    for(int i = 0; i < num_io_handles; i++) {
+      slices[i]->PrintSelf(os, indent.GetNextIndent());
+    }
+  }
+  else {
+      os << "(none)\n";
+  }
   os << indent << "Loop number: " << this->loop_number << "\n";
-  os << indent << "Number of input channels: " << this->num_io_handles << "\n";
 }
 
 void vtkRealityGridDataReader::SetInteractor(vtkRenderWindowInteractor* i) {
@@ -260,7 +270,7 @@ void _poll(vtkObject* obj, unsigned long eid, void* cd, void* calld) {
   if(reader->PollRealityGrid()) {
     // call update callback
     reader->update_callback(reader->slices, reader->user_data);
-    
+
     // re-render
     i->Render();
   }

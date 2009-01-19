@@ -65,7 +65,24 @@ vtkRealityGridDataSlice::~vtkRealityGridDataSlice() {
 void vtkRealityGridDataSlice::PrintSelf(ostream& os, vtkIndent indent) {
   os << indent << "vtkRealityGridDataSlice (" << this << ")\n";
   indent = indent.GetNextIndent();
-  os << indent << "Data type: " << this->type << "\n";
+  os << indent << "Data type: ";
+  switch(this->type) {
+  case vtkRealityGridDataReader::Int:
+    os << "Int\n";
+    break;
+  case vtkRealityGridDataReader::Char:
+    os << "Char\n";
+    break;
+  case vtkRealityGridDataReader::Float:
+    os << "Float\n";
+    break;
+  case vtkRealityGridDataReader::Double:
+    os << "Double\n";
+    break;
+  default:
+    os << "(none)\n";
+    break;
+  }
   os << indent << "Data size: " << this->size << "\n";
 }
 

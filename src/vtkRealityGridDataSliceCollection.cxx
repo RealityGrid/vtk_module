@@ -41,6 +41,16 @@ vtkRealityGridDataSliceCollection::~vtkRealityGridDataSliceCollection() {
   }
 }
 
+void vtkRealityGridDataSliceCollection::PrintSelf(ostream& os, vtkIndent indent) {
+  os << indent << "vtkRealityGridDataSliceCollection (" << this << ")\n";
+  indent = indent.GetNextIndent();
+  os << indent << "Name: " << this->name << "\n";
+  os << indent << "Data Slices: " << (this->NumberOfItems == 0 ? "(none)\n" : "\n");
+  for(int i = 0; i < this->NumberOfItems; i++) {
+    this->GetDataSlice(i)->PrintSelf(os, indent.GetNextIndent());
+  }
+}
+
 void vtkRealityGridDataSliceCollection::SetName(const char* n) {
   this->name = (char*) n;
 }
