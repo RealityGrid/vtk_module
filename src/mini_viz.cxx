@@ -36,13 +36,10 @@
 
 #include "vtkActor.h"
 #include "vtkCellArray.h"
-#include "vtkFloatArray.h"
 #include "vtkInteractorStyleSwitch.h"
-#include "vtkPointData.h"
 #include "vtkPoints.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkPolyDataNormals.h"
-#include "vtkProperty.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"

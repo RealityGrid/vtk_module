@@ -56,10 +56,10 @@ vtkRealityGridDataReader* vtkRealityGridDataReader::GetInstance() {
 
 // instantiate default
 vtkRealityGridDataReader::vtkRealityGridDataReader() {
-  this->loop_number = 0;
   for(int i = 0; i < REG_INITIAL_NUM_IOTYPES; i++) {
     this->slices[i] = vtkRealityGridDataSliceCollection::New();
   }
+  this->interactor = NULL;
   this->update_callback = NULL;
   this->user_data = NULL;
   this->InitializeRealityGrid();
