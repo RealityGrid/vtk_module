@@ -31,30 +31,7 @@
 #  Author.........: Robert Haines
 #----------------------------------------------------------------------
 
-set(REGVTK_SRCS
-  vtkRealityGridDataReader.cxx
-  vtkRealityGridDataSlice.cxx
-  vtkRealityGridDataSliceCollection.cxx
-)
-
-# header files
-include_directories(${PROJECT_SOURCE_DIR}/include)
-add_definitions(-Wno-deprecated)
-
-add_library(ReG_Steer_VTKReader SHARED ${REGVTK_SRCS})
-
-add_executable(mini_viz mini_viz.cxx)
-target_link_libraries(mini_viz
-  ReG_Steer_VTKReader
-  ${REG_LINK_LIBRARIES}
-  ${REG_EXTERNAL_LIBS}
-  -lvtkCommon
-  -lvtkRendering
-  -lvtkFiltering
-)
-
-# install rules
-install(TARGETS ReG_Steer_VTKReader mini_viz
-  LIBRARY DESTINATION ${REGVTK_LIB_INSTALL}
-  RUNTIME DESTINATION ${REGVTK_BIN_INSTALL}
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+  DESTINATION ${REGVTK_INC_INSTALL}
+  FILES_MATCHING PATTERN "*.h"
 )

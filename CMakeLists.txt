@@ -37,6 +37,13 @@ project(REGVTK CXX)
 cmake_minimum_required(VERSION 2.6)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMake")
 
+# version numbers
+set(REGVTK_VERSION_MAJ 1)
+set(REGVTK_VERSION_MIN 0)
+set(REGVTK_VERSION_PAT 0-rc1)
+set(REGVTK_VERSION 
+    "${REGVTK_VERSION_MAJ}.${REGVTK_VERSION_MIN}.${REGVTK_VERSION_PAT}")
+
 # set output directories.
 if(NOT LIBRARY_OUTPUT_PATH)
   set(LIBRARY_OUTPUT_PATH ${REGVTK_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all libraries.")
@@ -54,6 +61,49 @@ find_package(VTK REQUIRED)
 include_directories(${VTK_INCLUDE_DIRS})
 link_directories(${VTK_LIBRARY_DIRS})
 
+#
+# set up install location
+#
+
+# optionally install into the current ReG location
+# if not building against a build tree install
+if(${RealityGrid_INSTALL_TYPE} MATCHES "install")
+  option(REGVTK_INSTALL_TO_REG_DIR
+    "Install the VTK modules to the same location as the RealityGrid installation that they are being built for?"
+    OFF
+  )
+endif(${RealityGrid_INSTALL_TYPE} MATCHES "install")
+
+if(REGVTK_INSTALL_TO_REG_DIR)
+  set(CMAKE_INSTALL_PREFIX ${RealityGrid_INSTALL_PREFIX}
+    CACHE PATH
+    "Install path prefix, prepended onto install directories. The default setting is to install the VTK modules to the same location as the RealityGrid installation that they are being built for."
+    FORCE
+  )
+
+  string(
+    REPLACE "${RealityGrid_INSTALL_PREFIX}/" "" REGVTK_LIB_INSTALL
+    ${RealityGrid_LIBRARY_DIRS}
+  )
+  string(
+    REPLACE "${RealityGrid_INSTALL_PREFIX}/" "" REGVTK_INC_INSTALL
+    ${RealityGrid_INCLUDE_DIRS}
+  )
+  string(
+    REPLACE "${RealityGrid_INSTALL_PREFIX}/" "" REGVTK_BIN_INSTALL
+    ${RealityGrid_BIN_DIR}
+  )
+  string(
+    REPLACE "${RealityGrid_INSTALL_PREFIX}/" "" REGVTK_DOC_INSTALL
+    ${RealityGrid_DOCS_DIR}
+  )
+else(REGVTK_INSTALL_TO_REG_DIR)
+  set(REGVTK_LIB_INSTALL "lib/RealityGrid")
+  set(REGVTK_INC_INSTALL "include/RealityGrid")
+  set(REGVTK_BIN_INSTALL "bin")
+  set(REGVTK_DOC_INSTALL "share/doc/RealityGrid")
+endif(REGVTK_INSTALL_TO_REG_DIR)
+
 # build and install library and headers
 add_subdirectory(src)
-#add_subdirectory(include)
+add_subdirectory(include)
