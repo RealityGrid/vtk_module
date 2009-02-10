@@ -1,0 +1,60 @@
+This software is a VTK data reader for the RealityGrid Steering Library.
+
+Research Computing Services, IT Services, University of Manchester.
+
+----------------------------------------------------------------------
+
+Prerequisites:
+
+RealityGrid Steering Library
+
+CMake (see below) will find the Steering library on your machine if it
+has been installed in /usr/local or if you set the environment
+variable REG_HOME or REG_STEER_HOME to the path containing the lib and
+bin directories of the install or build.
+
+You can also input the path by hand into CMake.
+
+Visualization Toolkit (VTK) 5.0 (or later)
+
+CMake (see below) will find VTK if it is in your PATH or if an
+environment variable called VTK_DIR is set to the path containing the
+lib and bin directories of VTK.
+
+You can also input the path by hand into CMake.
+
+CMake
+
+The Steering library wrappers are built with an Open Source tool
+called CMake available from Kitware, Inc. It is available from here:
+http://www.cmake.org/ and is provided in a number of different
+flavours including Win32, Mac OS X, IRIX, AIX, Linux and source code.
+
+The Steering Library Wrappers require CMake version 2.6 or later.
+
+----------------------------------------------------------------------
+
+How to build and install:
+
+Please see the instructions that come with the Steering Library for
+how to use CMake.
+
+----------------------------------------------------------------------
+
+The Steering Library VTK Module Options.
+
+Some of these options will only be visible in "advanced mode".
+
+REGVTK_INSTALL_TO_REG_DIR - default OFF
+
+If this is set to ON CMake will set CMAKE_INSTALL_PREFIX to match that
+which was used to install the Steering Library. This will ensure that
+the wrappers are installed to the same locations as the Steering
+Library.
+
+----------------------------------------------------------------------
+
+Any comments, enquiries or pleas for explanation should be directed to
+the comp-steering mailing list.  Details available from:
+
+http://listserv.manchester.ac.uk/cgi-bin/wa?A0=COMP-STEERING
