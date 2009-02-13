@@ -30,11 +30,12 @@
 
 #ifndef __vtkRealityGridDataSlice_h__
 
+#include "vtkSteeringWin32Header.h"
 #include "vtkRealityGridDataReader.h"
 
 #include "vtkObject.h"
 
-class vtkRealityGridDataSlice : public vtkObject {
+class REGVTK_STEERING_EXPORT vtkRealityGridDataSlice : public vtkObject {
  private:
   vtkRealityGridDataReader::TypeIds type;
   int size;

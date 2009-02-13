@@ -30,11 +30,12 @@
 
 #ifndef __vtkRealityGridDataSliceCollection_h__
 
+#include "vtkSteeringWin32Header.h"
 #include "vtkRealityGridDataSlice.h"
 
 #include "vtkCollection.h"
 
-class vtkRealityGridDataSliceCollection : public vtkCollection {
+class REGVTK_STEERING_EXPORT vtkRealityGridDataSliceCollection : public vtkCollection {
  private:
   char* name;
   // hide the standard AddItem from the user and the compiler.

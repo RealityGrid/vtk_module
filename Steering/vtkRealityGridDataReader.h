@@ -30,6 +30,7 @@
 
 #ifndef __vtkRealityGridDataReader_h__
 
+#include "vtkSteeringWin32Header.h"
 #include "ReG_Steer_types.h"
 
 #include "vtkObject.h"
@@ -38,7 +39,7 @@ class vtkRenderWindowInteractor;
 
 class vtkRealityGridDataSliceCollection;
 
-class vtkRealityGridDataReader : public vtkObject {
+class REGVTK_STEERING_EXPORT vtkRealityGridDataReader : public vtkObject {
  private:
   static vtkRealityGridDataReader* _instance;
 

@@ -31,10 +31,13 @@
 #  Author.........: Robert Haines
 #----------------------------------------------------------------------
 
-project(REGVTK CXX)
+project(REGVTK)
 
 # cmake setup boiler-plate
 cmake_minimum_required(VERSION 2.6)
+if(COMMAND CMAKE_POLICY)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND CMAKE_POLICY)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMake")
 
 # version numbers
@@ -57,14 +60,10 @@ find_package(RealityGrid REQUIRED)
 include(${RealityGrid_USE_FILE})
 
 # need VTK
-find_package(VTK REQUIRED)
-include_directories(${VTK_INCLUDE_DIRS})
-link_directories(${VTK_LIBRARY_DIRS})
+include(InitializeVTK)
 
-#
 # set up install location
 #
-
 # optionally install into the current ReG location
 # if not building against a build tree install
 if(${RealityGrid_INSTALL_TYPE} MATCHES "install")
@@ -104,6 +103,20 @@ else(REGVTK_INSTALL_TO_REG_DIR)
   set(REGVTK_DOC_INSTALL "share/doc/RealityGrid")
 endif(REGVTK_INSTALL_TO_REG_DIR)
 
-# build and install library and headers
-add_subdirectory(src)
-add_subdirectory(include)
+# common configuration settings
+configure_file(
+  ${REGVTK_SOURCE_DIR}/vtkRealityGridConfigure.h.in
+  ${REGVTK_BINARY_DIR}/vtkRealityGridConfigure.h
+)
+include_directories(${REGVTK_BINARY_DIR})
+
+# include and then process the directories
+# with all the actual classes in them
+include_directories(${REGVTK_SOURCE_DIR}/Steering)
+add_subdirectory(Steering)
+
+# build examples too?
+option(BUILD_EXAMPLES "Build examples." ON)
+if(BUILD_EXAMPLES)
+  add_subdirectory(Examples)
+endif(BUILD_EXAMPLES)

@@ -31,7 +31,14 @@
 #  Author.........: Robert Haines
 #----------------------------------------------------------------------
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
-  DESTINATION ${REGVTK_INC_INSTALL}
-  FILES_MATCHING PATTERN "*.h"
+add_executable(mini_viz mini_viz.cxx)
+target_link_libraries(mini_viz
+  vtkRealityGridSteering
+  vtkRendering
+  vtkFiltering
+)
+
+# install rules
+install(TARGETS mini_viz
+  RUNTIME DESTINATION ${REGVTK_BIN_INSTALL}
 )
