@@ -29,7 +29,6 @@
 ---------------------------------------------------------------------------*/
 
 #include "vtkRealityGridDataSlice.h"
-#include "vtkRealityGridDataReader.h"
 
 #include "vtkObjectFactory.h"
 
@@ -38,7 +37,7 @@ vtkStandardNewMacro(vtkRealityGridDataSlice);
 
 // instantiate default
 vtkRealityGridDataSlice::vtkRealityGridDataSlice() {
-  this->type = vtkRealityGridDataReader::None;
+  this->type = -1;
   this->size = 0;
   this->data = NULL;
 }
@@ -67,16 +66,16 @@ void vtkRealityGridDataSlice::PrintSelf(ostream& os, vtkIndent indent) {
   indent = indent.GetNextIndent();
   os << indent << "Data type: ";
   switch(this->type) {
-  case vtkRealityGridDataReader::Int:
+  case REG_INT:
     os << "Int\n";
     break;
-  case vtkRealityGridDataReader::Char:
+  case REG_CHAR:
     os << "Char\n";
     break;
-  case vtkRealityGridDataReader::Float:
+  case REG_FLOAT:
     os << "Float\n";
     break;
-  case vtkRealityGridDataReader::Double:
+  case REG_DBL:
     os << "Double\n";
     break;
   default:
@@ -86,7 +85,7 @@ void vtkRealityGridDataSlice::PrintSelf(ostream& os, vtkIndent indent) {
   os << indent << "Data size: " << this->size << "\n";
 }
 
-void vtkRealityGridDataSlice::SetDataType(vtkRealityGridDataReader::TypeIds t) {
+void vtkRealityGridDataSlice::SetDataType(int t) {
   this->type = t;
 }
 

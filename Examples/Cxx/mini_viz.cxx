@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
   ud->surface = surface;
   ud->text = text;
   vtkRealityGridDataReader* reader = vtkRealityGridDataReader::New();
-  reader->RegisterIOChannel("mini_app in", vtkRealityGridDataReader::In, 10);
+  reader->RegisterIOChannel("mini_app in", REG_IO_IN, 10);
   reader->SetUpdateCallback(redrawCallback);
   reader->SetUpdateUserData((void*) ud);
   reader->SetInteractor(reni);

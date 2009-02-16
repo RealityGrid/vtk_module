@@ -184,7 +184,7 @@ bool vtkRealityGridDataReader::PollRealityGrid() {
 	      slice->SetDataSize(data_count);
 	      slice->SetData(data);
 	    }
-	    slice->SetDataType(vtkRealityGridDataReader::Int);
+	    slice->SetDataType(REG_INT);
 	    status = Consume_data_slice(iohandle, data_type, data_count, data);
 	    break;
 	  case REG_CHAR:
@@ -195,7 +195,7 @@ bool vtkRealityGridDataReader::PollRealityGrid() {
 	      slice->SetDataSize(data_count);
 	      slice->SetData(data);
 	    }
-	    slice->SetDataType(vtkRealityGridDataReader::Char);
+	    slice->SetDataType(REG_CHAR);
 	    status = Consume_data_slice(iohandle, data_type, data_count, data);
 	    break;
 	  case REG_FLOAT:
@@ -206,7 +206,7 @@ bool vtkRealityGridDataReader::PollRealityGrid() {
 	      slice->SetDataSize(data_count);
 	      slice->SetData(data);
 	    }
-	    slice->SetDataType(vtkRealityGridDataReader::Float);
+	    slice->SetDataType(REG_FLOAT);
 	    status = Consume_data_slice(iohandle, data_type, data_count, data);
 	    break;
 	  case REG_DBL:
@@ -217,7 +217,7 @@ bool vtkRealityGridDataReader::PollRealityGrid() {
 	      slice->SetDataSize(data_count);
 	      slice->SetData(data);
 	    }
-	    slice->SetDataType(vtkRealityGridDataReader::Double);
+	    slice->SetDataType(REG_DBL);
 	    status = Consume_data_slice(iohandle, data_type, data_count, data);
 	    break;
 	  } // end switch(data_type)
@@ -241,7 +241,7 @@ void vtkRealityGridDataReader::FinalizeRealityGrid() {
 
 // Register an IO channel
 // TODO: check bounds of io_handles[]
-void vtkRealityGridDataReader::RegisterIOChannel(const char* name, vtkRealityGridDataReader::IODir dir, int freq) {
+void vtkRealityGridDataReader::RegisterIOChannel(const char* name, int dir, int freq) {
   int status;
   status = Register_IOType((char*) name, dir, freq, &io_handles[num_io_handles]);
   if(status == REG_SUCCESS) {

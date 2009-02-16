@@ -31,13 +31,14 @@
 #ifndef __vtkRealityGridDataSlice_h__
 
 #include "vtkSteeringWin32Header.h"
-#include "vtkRealityGridDataReader.h"
 
 #include "vtkObject.h"
 
+#include "ReG_Steer_types.h"
+
 class REGVTK_STEERING_EXPORT vtkRealityGridDataSlice : public vtkObject {
  private:
-  vtkRealityGridDataReader::TypeIds type;
+  int type;
   int size;
   void* data;
 
@@ -50,16 +51,16 @@ class REGVTK_STEERING_EXPORT vtkRealityGridDataSlice : public vtkObject {
   vtkTypeRevisionMacro(vtkRealityGridDataSlice,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkRealityGridDataReader::TypeIds GetDataType();
+  int GetDataType();
   int GetDataSize();
   void* GetData();
 
-  void SetDataType(vtkRealityGridDataReader::TypeIds);
+  void SetDataType(int);
   void SetDataSize(int);
   void SetData(void*);
 };
 
-inline vtkRealityGridDataReader::TypeIds vtkRealityGridDataSlice::GetDataType() {
+inline int vtkRealityGridDataSlice::GetDataType() {
   return this->type;
 }
 

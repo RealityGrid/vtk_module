@@ -31,9 +31,10 @@
 #ifndef __vtkRealityGridDataReader_h__
 
 #include "vtkSteeringWin32Header.h"
-#include "ReG_Steer_types.h"
 
 #include "vtkObject.h"
+
+#include "ReG_Steer_types.h"
 
 class vtkRenderWindowInteractor;
 
@@ -67,23 +68,6 @@ class REGVTK_STEERING_EXPORT vtkRealityGridDataReader : public vtkObject {
   ~vtkRealityGridDataReader();
 
  public:
-  enum TypeIds {
-    None = -1,
-    Int = REG_INT,
-    Float = REG_FLOAT,
-    Double = REG_DBL,
-    Char = REG_CHAR,
-    Bin = REG_BIN,
-    Long = REG_LONG
-  };
-
-  enum IODir {
-    Undef = -1,
-    In = REG_IO_IN,
-    Out = REG_IO_OUT,
-    Both = REG_IO_INOUT
-  };
-
   static vtkRealityGridDataReader* New();
   static vtkRealityGridDataReader* GetInstance();
   vtkTypeRevisionMacro(vtkRealityGridDataReader,vtkObject);
@@ -99,7 +83,7 @@ class REGVTK_STEERING_EXPORT vtkRealityGridDataReader : public vtkObject {
 
   void SetInteractor(vtkRenderWindowInteractor*);
 
-  void RegisterIOChannel(const char*, vtkRealityGridDataReader::IODir, int);
+  void RegisterIOChannel(const char*, int, int);
 
   friend void _poll(vtkObject*, unsigned long, void*, void*);
 };
