@@ -37,7 +37,6 @@
 
 class REGVTK_STEERING_EXPORT vtkRealityGridDataSliceCollection : public vtkCollection {
  private:
-  char* name;
   // hide the standard AddItem from the user and the compiler.
   void AddItem(vtkObject* o) { this->vtkCollection::AddItem(o); };
 
@@ -66,8 +65,6 @@ class REGVTK_STEERING_EXPORT vtkRealityGridDataSliceCollection : public vtkColle
   // Get the last data slice in the list.
   vtkRealityGridDataSlice* GetLastDataSlice();
 
-  void SetName(const char*);
-  char* GetName();
 };
 
 inline void vtkRealityGridDataSliceCollection::AddItem(vtkRealityGridDataSlice* a) {
@@ -92,10 +89,6 @@ inline vtkRealityGridDataSlice* vtkRealityGridDataSliceCollection::GetLastDataSl
   else {
     return static_cast<vtkRealityGridDataSlice*>(this->Bottom->Item);
   }
-}
-
-inline char* vtkRealityGridDataSliceCollection::GetName() {
-  return this->name;
 }
 
 #define __vtkRealityGridDataSliceCollection_h__

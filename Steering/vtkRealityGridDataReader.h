@@ -38,7 +38,7 @@
 
 class vtkRenderWindowInteractor;
 
-class vtkRealityGridDataSliceCollection;
+class vtkRealityGridIOChannel;
 
 class REGVTK_STEERING_EXPORT vtkRealityGridDataReader : public vtkObject {
  private:
@@ -51,12 +51,11 @@ class REGVTK_STEERING_EXPORT vtkRealityGridDataReader : public vtkObject {
   int recvdCmds[REG_MAX_NUM_STR_CMDS];
   char** changedParamLabels;
   char** recvdCmdParams;
-  int num_io_handles;
-  int io_handles[REG_INITIAL_NUM_IOTYPES];
-  vtkRealityGridDataSliceCollection* slices[REG_INITIAL_NUM_IOTYPES];
+  int num_io_channels;
+  vtkRealityGridIOChannel* io_channels[REG_INITIAL_NUM_IOTYPES];
 
   void* user_data;
-  void (*update_callback) (vtkRealityGridDataSliceCollection**, void*);
+  void (*update_callback) (vtkRealityGridIOChannel**, void*);
   vtkRenderWindowInteractor* interactor;
 
   void InitializeRealityGrid();
@@ -73,10 +72,10 @@ class REGVTK_STEERING_EXPORT vtkRealityGridDataReader : public vtkObject {
   vtkTypeRevisionMacro(vtkRealityGridDataReader,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkRealityGridDataSliceCollection* GetDataSlices(int);
+  vtkRealityGridIOChannel* GetIOChannel(int);
   int GetMaxIOChannels();
 
-  void SetUpdateCallback(void (*func)(vtkRealityGridDataSliceCollection** slices, void* user_data)) {
+  void SetUpdateCallback(void (*func)(vtkRealityGridIOChannel** slices, void* user_data)) {
     this->update_callback = func;
   }
   void SetUpdateUserData(void*);
@@ -88,8 +87,8 @@ class REGVTK_STEERING_EXPORT vtkRealityGridDataReader : public vtkObject {
   friend void _poll(vtkObject*, unsigned long, void*, void*);
 };
 
-inline vtkRealityGridDataSliceCollection* vtkRealityGridDataReader::GetDataSlices(int i) {
-  return this->slices[i];
+inline vtkRealityGridIOChannel* vtkRealityGridDataReader::GetIOChannel(int i) {
+  return this->io_channels[i];
 }
 
 inline int vtkRealityGridDataReader::GetMaxIOChannels() {

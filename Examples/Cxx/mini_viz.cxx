@@ -33,6 +33,7 @@
 #include "vtkRealityGridDataReader.h"
 #include "vtkRealityGridDataSlice.h"
 #include "vtkRealityGridDataSliceCollection.h"
+#include "vtkRealityGridIOChannel.h"
 
 #include "vtkActor.h"
 #include "vtkCellArray.h"
@@ -52,7 +53,7 @@ struct UserData {
   vtkTextActor* text;
 };
 
-void redrawCallback(vtkRealityGridDataSliceCollection**, void*);
+void redrawCallback(vtkRealityGridIOChannel**, void*);
 
 int main(int argc, char** argv) {
   vtkPolyData* surface = vtkPolyData::New();
@@ -120,7 +121,7 @@ int main(int argc, char** argv) {
   return 0;
 }
 
-void redrawCallback(vtkRealityGridDataSliceCollection** slices, void* ud) {
+void redrawCallback(vtkRealityGridIOChannel** io_channels, void* ud) {
   int data_size;
   int num_points, index;
   float* data;
@@ -129,15 +130,17 @@ void redrawCallback(vtkRealityGridDataSliceCollection** slices, void* ud) {
   vtkCellArray* strips = vtkCellArray::New();
   vtkPolyData* surface = ((UserData*) ud)->surface;
   vtkTextActor* text = ((UserData*) ud)->text;
+  vtkRealityGridDataSliceCollection* slices;
   vtkRealityGridDataSlice* slice;
 
   // get data dimensions
-  slice = slices[0]->GetDataSlice(0);
+  slices = io_channels[0]->GetDataSlices();
+  slice = slices->GetDataSlice(0);
   data_size = *((int*) slice->GetData());
   num_points = data_size * data_size;
 
   // get points
-  slice = slices[0]->GetDataSlice(1);
+  slice = slices->GetDataSlice(1);
   data = (float*) slice->GetData();
   points->Allocate(num_points);
   index = 0;

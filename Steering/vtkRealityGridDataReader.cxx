@@ -32,6 +32,7 @@
 
 #include "vtkRealityGridDataReader.h"
 #include "vtkRealityGridDataSliceCollection.h"
+#include "vtkRealityGridIOChannel.h"
 
 #include "vtkCallbackCommand.h"
 #include "vtkCommand.h"
@@ -57,7 +58,7 @@ vtkRealityGridDataReader* vtkRealityGridDataReader::GetInstance() {
 // instantiate default
 vtkRealityGridDataReader::vtkRealityGridDataReader() {
   for(int i = 0; i < REG_INITIAL_NUM_IOTYPES; i++) {
-    this->slices[i] = vtkRealityGridDataSliceCollection::New();
+    this->io_channels[i] = vtkRealityGridIOChannel::New();
   }
   this->interactor = NULL;
   this->update_callback = NULL;
@@ -67,8 +68,8 @@ vtkRealityGridDataReader::vtkRealityGridDataReader() {
 
 vtkRealityGridDataReader::~vtkRealityGridDataReader() {
   for(int i = 0; i < REG_INITIAL_NUM_IOTYPES; i++) {
-    if(slices[i]) {
-      this->slices[i]->Delete();
+    if(io_channels[i]) {
+      this->io_channels[i]->Delete();
     }
   }
   this->FinalizeRealityGrid();
@@ -79,11 +80,11 @@ void vtkRealityGridDataReader::PrintSelf(ostream& os, vtkIndent indent) {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "Interactor: " << (interactor == NULL ? "not set" : "set") << "\n";
   os << indent << "Update Callback: " << (update_callback == NULL ? "not set" : "set") << "\n";
-  os << indent << "Input Channels: ";
-  if(num_io_handles > 0) {
-    os << num_io_handles << std::endl;
-    for(int i = 0; i < num_io_handles; i++) {
-      slices[i]->PrintSelf(os, indent.GetNextIndent());
+  os << indent << "IO Channels: ";
+  if(num_io_channels > 0) {
+    os << num_io_channels << std::endl;
+    for(int i = 0; i < num_io_channels; i++) {
+      io_channels[i]->PrintSelf(os, indent.GetNextIndent());
     }
   }
   else {
@@ -120,7 +121,7 @@ void vtkRealityGridDataReader::InitializeRealityGrid() {
   Steering_initialize("RealityGrid VTK Data Reader", 0, NULL);
 
   loop_number = 0;
-  num_io_handles = 0;
+  num_io_channels = 0;
 }
 
 // Call Steering_control and do required steering ops
@@ -149,14 +150,14 @@ bool vtkRealityGridDataReader::PollRealityGrid() {
     // work out which IO handle we need to read from
     int io_handle_num = -1;
     for(int j = 0; j < REG_INITIAL_NUM_IOTYPES; j++) {
-      if(recvdCmds[i] == io_handles[j])
+      if(recvdCmds[i] == io_channels[j]->GetHandle())
 	io_handle_num = j;
     }
 
     // read from the IO handle
     if(io_handle_num != -1) {
       // open the channel to consume data
-      status = Consume_start(io_handles[io_handle_num], &iohandle);
+      status = Consume_start(io_channels[io_handle_num]->GetHandle(), &iohandle);
       if(status == REG_SUCCESS) {
 
 	// data is available to read. get header describing it
@@ -165,14 +166,17 @@ bool vtkRealityGridDataReader::PollRealityGrid() {
 
 	while(status == REG_SUCCESS) {
 
+	  vtkRealityGridDataSliceCollection* slices;
 	  vtkRealityGridDataSlice* slice;
 	  void* data;
 
 	  // get slice to put data into
-	  slice = slices[io_handle_num]->GetDataSlice(slices_read);
+	  slices = io_channels[io_handle_num]->GetDataSlices();
+	  slice = slices->GetDataSlice(slices_read);
+
 	  if(slice == NULL) {
 	    slice = vtkRealityGridDataSlice::New();
-	    slices[io_handle_num]->AddItem(slice);
+	    slices->AddItem(slice);
 	  }
 
 	  switch(data_type) {
@@ -243,10 +247,14 @@ void vtkRealityGridDataReader::FinalizeRealityGrid() {
 // TODO: check bounds of io_handles[]
 void vtkRealityGridDataReader::RegisterIOChannel(const char* name, int dir, int freq) {
   int status;
-  status = Register_IOType((char*) name, dir, freq, &io_handles[num_io_handles]);
+  int io_handle;
+
+  status = Register_IOType((char*) name, dir, freq, &io_handle);
   if(status == REG_SUCCESS) {
-    slices[num_io_handles]->SetName(name);
-    num_io_handles++;
+    io_channels[num_io_channels]->SetHandle(io_handle);
+    io_channels[num_io_channels]->SetName(name);
+    io_channels[num_io_channels]->SetIODirection(dir);
+    num_io_channels++;
   }
 }
 
@@ -269,7 +277,7 @@ void _poll(vtkObject* obj, unsigned long eid, void* cd, void* calld) {
   // do ReG stuff and re-render if necessary
   if(reader->PollRealityGrid()) {
     // call update callback
-    reader->update_callback(reader->slices, reader->user_data);
+    reader->update_callback(reader->io_channels, reader->user_data);
 
     // re-render
     i->Render();

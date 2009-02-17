@@ -32,9 +32,10 @@
 #----------------------------------------------------------------------
 
 set(Steering_SRCS
+  vtkRealityGridDataReader.cxx
   vtkRealityGridDataSlice.cxx
   vtkRealityGridDataSliceCollection.cxx
-  vtkRealityGridDataReader.cxx
+  vtkRealityGridIOChannel.cxx
 )
 foreach(file ${Steering_SRCS})
   string(REPLACE ".cxx" ".h" temp ${file})

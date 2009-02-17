@@ -28,24 +28,57 @@
   Author: Robert Haines
 ---------------------------------------------------------------------------*/
 
-#include "vtkRealityGridDataSliceCollection.h"
+#ifndef __vtkRealityGridIOChannel_h__
 
-#include "vtkObjectFactory.h"
+#include "vtkSteeringWin32Header.h"
 
-vtkCxxRevisionMacro(vtkRealityGridDataSliceCollection, "Revision: 0.01");
-vtkStandardNewMacro(vtkRealityGridDataSliceCollection);
+#include "vtkObject.h"
 
-vtkRealityGridDataSliceCollection::~vtkRealityGridDataSliceCollection() {
-  for(int i = 0; i < this->GetNumberOfItems(); i++) {
-    this->GetDataSlice(i)->Delete();
-  }
+class vtkRealityGridDataSliceCollection;
+
+class REGVTK_STEERING_EXPORT vtkRealityGridIOChannel : public vtkObject {
+ private:
+  int handle;
+  char* name;
+  int io_direction;
+  vtkRealityGridDataSliceCollection* data_slices;
+
+ protected:
+  vtkRealityGridIOChannel();
+  ~vtkRealityGridIOChannel();
+
+ public:
+  static vtkRealityGridIOChannel* New();
+  vtkTypeRevisionMacro(vtkRealityGridIOChannel,vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent);
+
+  void SetHandle(const int);
+  int GetHandle();
+
+  void SetName(const char*);
+  char* GetName();
+
+  void SetIODirection(const int);
+  int GetIODirection();
+
+  vtkRealityGridDataSliceCollection* GetDataSlices();
+};
+
+inline int vtkRealityGridIOChannel::GetHandle() {
+  return this->handle;
 }
 
-void vtkRealityGridDataSliceCollection::PrintSelf(ostream& os, vtkIndent indent) {
-  os << indent << "vtkRealityGridDataSliceCollection (" << this << ")\n";
-  indent = indent.GetNextIndent();
-  os << indent << "Data Slices: " << (this->NumberOfItems == 0 ? "(none)\n" : "\n");
-  for(int i = 0; i < this->NumberOfItems; i++) {
-    this->GetDataSlice(i)->PrintSelf(os, indent.GetNextIndent());
-  }
+inline char* vtkRealityGridIOChannel::GetName() {
+  return this->name;
 }
+
+inline int vtkRealityGridIOChannel::GetIODirection() {
+  return this->io_direction;
+}
+
+inline vtkRealityGridDataSliceCollection* vtkRealityGridIOChannel::GetDataSlices() {
+  return this->data_slices;
+}
+
+#define __vtkRealityGridIOChannel_h__
+#endif // __vtkRealityGridIOChannel_h__

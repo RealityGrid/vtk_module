@@ -29,23 +29,61 @@
 ---------------------------------------------------------------------------*/
 
 #include "vtkRealityGridDataSliceCollection.h"
+#include "vtkRealityGridIOChannel.h"
 
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkRealityGridDataSliceCollection, "Revision: 0.01");
-vtkStandardNewMacro(vtkRealityGridDataSliceCollection);
+vtkCxxRevisionMacro(vtkRealityGridIOChannel, "Revision: 0.01");
+vtkStandardNewMacro(vtkRealityGridIOChannel);
 
-vtkRealityGridDataSliceCollection::~vtkRealityGridDataSliceCollection() {
-  for(int i = 0; i < this->GetNumberOfItems(); i++) {
-    this->GetDataSlice(i)->Delete();
+vtkRealityGridIOChannel::vtkRealityGridIOChannel() {
+  this->handle = -1;
+  this->io_direction = -1;
+  this->data_slices = vtkRealityGridDataSliceCollection::New();
+}
+
+vtkRealityGridIOChannel::~vtkRealityGridIOChannel() {
+  if(this->data_slices) {
+    this->data_slices->Delete();
+    this->data_slices = NULL;
   }
 }
 
-void vtkRealityGridDataSliceCollection::PrintSelf(ostream& os, vtkIndent indent) {
-  os << indent << "vtkRealityGridDataSliceCollection (" << this << ")\n";
+void vtkRealityGridIOChannel::PrintSelf(ostream& os, vtkIndent indent) {
+  os << indent << "vtkRealityGridIOChannel (" << this << ")\n";
   indent = indent.GetNextIndent();
-  os << indent << "Data Slices: " << (this->NumberOfItems == 0 ? "(none)\n" : "\n");
-  for(int i = 0; i < this->NumberOfItems; i++) {
-    this->GetDataSlice(i)->PrintSelf(os, indent.GetNextIndent());
+  os << indent << "Name: " << (name != NULL ? name : "(none)") << "\n";
+  os << indent << "IO Handle: " << this->handle << "\n";
+  os << indent << "IO Direction: ";
+  switch(this->io_direction) {
+  case REG_IO_IN:
+    os << "IN\n";
+    break;
+  case REG_IO_OUT:
+    os << "OUT\n";
+    break;
+  case REG_IO_INOUT:
+    os << "IN and OUT\n";
+    break;
   }
+  os << indent << "Data:";
+  if(data_slices == NULL) {
+    os << " (none)\n";
+  }
+  else {
+    os << "\n";
+    data_slices->PrintSelf(os, indent.GetNextIndent());
+  }
+}
+
+void vtkRealityGridIOChannel::SetHandle(int h) {
+  this->handle = h;
+}
+
+void vtkRealityGridIOChannel::SetName(const char* n) {
+  this->name = (char*) n;
+}
+
+void vtkRealityGridIOChannel::SetIODirection(const int d) {
+  this->io_direction = d;
 }
