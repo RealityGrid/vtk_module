@@ -28,10 +28,13 @@
   Author: Robert Haines
 ---------------------------------------------------------------------------*/
 
+#include "vtkRealityGridDataSlice.h"
 #include "vtkRealityGridDataSliceCollection.h"
 #include "vtkRealityGridIOChannel.h"
 
 #include "vtkObjectFactory.h"
+
+#include "ReG_Steer_Appside.h"
 
 vtkCxxRevisionMacro(vtkRealityGridIOChannel, "Revision: 0.01");
 vtkStandardNewMacro(vtkRealityGridIOChannel);
@@ -86,4 +89,99 @@ void vtkRealityGridIOChannel::SetName(const char* n) {
 
 void vtkRealityGridIOChannel::SetIODirection(const int d) {
   this->io_direction = d;
+}
+
+bool vtkRealityGridIOChannel::Update() {
+  switch(io_direction) {
+  case REG_IO_IN:
+    return RecvData();
+    break;
+  case REG_IO_OUT:
+    break;
+  case REG_IO_INOUT:
+    break;
+  }
+}
+
+bool vtkRealityGridIOChannel::RecvData() {
+  int status;
+  int data_type;
+  int data_count;
+  int slices_read = 0;
+  REG_IOHandleType iohandle;
+
+  status = Consume_start(handle, &iohandle);
+  if(status == REG_SUCCESS) {
+
+    // data is available to read. get header describing it
+    status = Consume_data_slice_header(iohandle, &data_type, &data_count);
+
+    while(status == REG_SUCCESS) {
+
+      vtkRealityGridDataSlice* slice;
+      void* data;
+
+      // get slice to put data into
+      slice = data_slices->GetDataSlice(slices_read);
+
+      if(slice == NULL) {
+	slice = vtkRealityGridDataSlice::New();
+	data_slices->AddItem(slice);
+      }
+
+      switch(data_type) {
+      case REG_INT:
+	data = slice->GetData();
+	if(data_count > slice->GetDataSize()) {
+	  if(data) delete [] (int*) data;
+	  data = new int[data_count];
+	  slice->SetDataSize(data_count);
+	  slice->SetData(data);
+	}
+	slice->SetDataType(REG_INT);
+	status = Consume_data_slice(iohandle, data_type, data_count, data);
+	break;
+      case REG_CHAR:
+	data = slice->GetData();
+	if(data_count > slice->GetDataSize()) {
+	  if(data) delete [] (char*) data;
+	  data = new char[data_count];
+	  slice->SetDataSize(data_count);
+	  slice->SetData(data);
+	}
+	slice->SetDataType(REG_CHAR);
+	status = Consume_data_slice(iohandle, data_type, data_count, data);
+	break;
+      case REG_FLOAT:
+	data = slice->GetData();
+	if(data_count > slice->GetDataSize()) {
+	  if(data) delete [] (float*) data;
+	  data = new float[data_count];
+	  slice->SetDataSize(data_count);
+	  slice->SetData(data);
+	}
+	slice->SetDataType(REG_FLOAT);
+	status = Consume_data_slice(iohandle, data_type, data_count, data);
+	break;
+      case REG_DBL:
+	data = slice->GetData();
+	if(data_count > slice->GetDataSize()) {
+	  if(data) delete [] (double*) data;
+	  data = new double[data_count];
+	  slice->SetDataSize(data_count);
+	  slice->SetData(data);
+	}
+	slice->SetDataType(REG_DBL);
+	status = Consume_data_slice(iohandle, data_type, data_count, data);
+	break;
+      } // end switch(data_type)
+
+      slices_read++;
+      status = Consume_data_slice_header(iohandle, &data_type, &data_count);
+    } // end while
+
+    status = Consume_stop(&iohandle);
+  }
+
+  return (slices_read != 0);
 }

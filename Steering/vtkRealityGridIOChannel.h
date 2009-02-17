@@ -43,6 +43,8 @@ class REGVTK_STEERING_EXPORT vtkRealityGridIOChannel : public vtkObject {
   int io_direction;
   vtkRealityGridDataSliceCollection* data_slices;
 
+  bool RecvData();
+
  protected:
   vtkRealityGridIOChannel();
   ~vtkRealityGridIOChannel();
@@ -62,6 +64,8 @@ class REGVTK_STEERING_EXPORT vtkRealityGridIOChannel : public vtkObject {
   int GetIODirection();
 
   vtkRealityGridDataSliceCollection* GetDataSlices();
+
+  bool Update();
 };
 
 inline int vtkRealityGridIOChannel::GetHandle() {

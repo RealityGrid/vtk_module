@@ -31,7 +31,6 @@
 #include <iostream>
 
 #include "vtkRealityGridDataReader.h"
-#include "vtkRealityGridDataSliceCollection.h"
 #include "vtkRealityGridIOChannel.h"
 
 #include "vtkCallbackCommand.h"
@@ -127,10 +126,7 @@ void vtkRealityGridDataReader::InitializeRealityGrid() {
 // Call Steering_control and do required steering ops
 bool vtkRealityGridDataReader::PollRealityGrid() {
   int status;
-  int data_type;
-  int data_count;
-  int slices_read = 0;
-  REG_IOHandleType iohandle;
+  bool updated = false;
 
   status = Steering_control(loop_number++,
 			    &numParamsChanged,
@@ -147,95 +143,14 @@ bool vtkRealityGridDataReader::PollRealityGrid() {
   // deal with steering commands
   for(int i = 0; i < numRecvdCmds; i++) {
 
-    // work out which IO handle we need to read from
-    int io_handle_num = -1;
+    // update the IO channels
     for(int j = 0; j < REG_INITIAL_NUM_IOTYPES; j++) {
       if(recvdCmds[i] == io_channels[j]->GetHandle())
-	io_handle_num = j;
+	updated = io_channels[j]->Update();
     }
+  }
 
-    // read from the IO handle
-    if(io_handle_num != -1) {
-      // open the channel to consume data
-      status = Consume_start(io_channels[io_handle_num]->GetHandle(), &iohandle);
-      if(status == REG_SUCCESS) {
-
-	// data is available to read. get header describing it
-	slices_read = 0;
-	status = Consume_data_slice_header(iohandle, &data_type, &data_count);
-
-	while(status == REG_SUCCESS) {
-
-	  vtkRealityGridDataSliceCollection* slices;
-	  vtkRealityGridDataSlice* slice;
-	  void* data;
-
-	  // get slice to put data into
-	  slices = io_channels[io_handle_num]->GetDataSlices();
-	  slice = slices->GetDataSlice(slices_read);
-
-	  if(slice == NULL) {
-	    slice = vtkRealityGridDataSlice::New();
-	    slices->AddItem(slice);
-	  }
-
-	  switch(data_type) {
-	  case REG_INT:
-	    data = slice->GetData();
-	    if(data_count > slice->GetDataSize()) {
-	      if(data) delete [] (int*) data;
-	      data = new int[data_count];
-	      slice->SetDataSize(data_count);
-	      slice->SetData(data);
-	    }
-	    slice->SetDataType(REG_INT);
-	    status = Consume_data_slice(iohandle, data_type, data_count, data);
-	    break;
-	  case REG_CHAR:
-	    data = slice->GetData();
-	    if(data_count > slice->GetDataSize()) {
-	      if(data) delete [] (char*) data;
-	      data = new char[data_count];
-	      slice->SetDataSize(data_count);
-	      slice->SetData(data);
-	    }
-	    slice->SetDataType(REG_CHAR);
-	    status = Consume_data_slice(iohandle, data_type, data_count, data);
-	    break;
-	  case REG_FLOAT:
-	    data = slice->GetData();
-	    if(data_count > slice->GetDataSize()) {
-	      if(data) delete [] (float*) data;
-	      data = new float[data_count];
-	      slice->SetDataSize(data_count);
-	      slice->SetData(data);
-	    }
-	    slice->SetDataType(REG_FLOAT);
-	    status = Consume_data_slice(iohandle, data_type, data_count, data);
-	    break;
-	  case REG_DBL:
-	    data = slice->GetData();
-	    if(data_count > slice->GetDataSize()) {
-	      if(data) delete [] (double*) data;
-	      data = new double[data_count];
-	      slice->SetDataSize(data_count);
-	      slice->SetData(data);
-	    }
-	    slice->SetDataType(REG_DBL);
-	    status = Consume_data_slice(iohandle, data_type, data_count, data);
-	    break;
-	  } // end switch(data_type)
-
-	  slices_read++;
-	  status = Consume_data_slice_header(iohandle, &data_type, &data_count);
-	} // end while
-
-	status = Consume_stop(&iohandle);
-      } // Consume_start
-    }
-  } // numRecvdCmds
-
-  return (slices_read != 0);
+  return updated;
 }
 
 void vtkRealityGridDataReader::FinalizeRealityGrid() {
