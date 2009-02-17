@@ -42,14 +42,16 @@ vtkStandardNewMacro(vtkRealityGridIOChannel);
 vtkRealityGridIOChannel::vtkRealityGridIOChannel() {
   this->handle = -1;
   this->io_direction = -1;
-  this->data_slices = vtkRealityGridDataSliceCollection::New();
+  this->data_in = vtkRealityGridDataSliceCollection::New();
+  this->data_out = vtkRealityGridDataSliceCollection::New();
 }
 
 vtkRealityGridIOChannel::~vtkRealityGridIOChannel() {
-  if(this->data_slices) {
-    this->data_slices->Delete();
-    this->data_slices = NULL;
-  }
+  if(this->data_in)
+    this->data_in->Delete();
+
+  if(this->data_out)
+    this->data_out->Delete();
 }
 
 void vtkRealityGridIOChannel::PrintSelf(ostream& os, vtkIndent indent) {
@@ -60,22 +62,19 @@ void vtkRealityGridIOChannel::PrintSelf(ostream& os, vtkIndent indent) {
   os << indent << "IO Direction: ";
   switch(this->io_direction) {
   case REG_IO_IN:
-    os << "IN\n";
+    os << "IN\n" << indent << "Data Slices:\n";
+    data_in->PrintSelf(os, indent.GetNextIndent());
     break;
   case REG_IO_OUT:
-    os << "OUT\n";
+    os << "OUT\n" << indent << "Data Slices:\n";
+    data_out->PrintSelf(os, indent.GetNextIndent());
     break;
   case REG_IO_INOUT:
-    os << "IN and OUT\n";
+    os << "IN and OUT\n" << indent << "Data Slices In:\n";
+    data_in->PrintSelf(os, indent.GetNextIndent());
+    os << indent << "Data Slices Out:\n";
+    data_out->PrintSelf(os, indent.GetNextIndent());
     break;
-  }
-  os << indent << "Data:";
-  if(data_slices == NULL) {
-    os << " (none)\n";
-  }
-  else {
-    os << "\n";
-    data_slices->PrintSelf(os, indent.GetNextIndent());
   }
 }
 
@@ -91,16 +90,23 @@ void vtkRealityGridIOChannel::SetIODirection(const int d) {
   this->io_direction = d;
 }
 
-bool vtkRealityGridIOChannel::Update() {
+bool vtkRealityGridIOChannel::Update(int loop) {
+  bool result = false;
+
   switch(io_direction) {
   case REG_IO_IN:
-    return RecvData();
+    result = RecvData();
     break;
   case REG_IO_OUT:
+    SendData(loop);
     break;
   case REG_IO_INOUT:
+    SendData(loop);
+    result = RecvData();
     break;
   }
+
+  return result;
 }
 
 bool vtkRealityGridIOChannel::RecvData() {
@@ -110,6 +116,9 @@ bool vtkRealityGridIOChannel::RecvData() {
   int slices_read = 0;
   REG_IOHandleType iohandle;
 
+  vtkRealityGridDataSlice* slice;
+  void* data;
+
   status = Consume_start(handle, &iohandle);
   if(status == REG_SUCCESS) {
 
@@ -118,15 +127,12 @@ bool vtkRealityGridIOChannel::RecvData() {
 
     while(status == REG_SUCCESS) {
 
-      vtkRealityGridDataSlice* slice;
-      void* data;
-
       // get slice to put data into
-      slice = data_slices->GetDataSlice(slices_read);
+      slice = data_in->GetDataSlice(slices_read);
 
       if(slice == NULL) {
 	slice = vtkRealityGridDataSlice::New();
-	data_slices->AddItem(slice);
+	data_in->AddItem(slice);
       }
 
       switch(data_type) {
@@ -184,4 +190,30 @@ bool vtkRealityGridIOChannel::RecvData() {
   }
 
   return (slices_read != 0);
+}
+
+void vtkRealityGridIOChannel::SendData(int loop) {
+  int status;
+  int num_slices;
+  REG_IOHandleType iohandle;
+  vtkRealityGridDataSlice* slice;
+
+  num_slices = data_out->GetNumberOfItems();
+  if(num_slices == 0)
+    return;
+
+  status = Emit_start(handle, loop, &iohandle);
+    
+  if(status == REG_SUCCESS) {
+    for(int i = 0; i < num_slices; i++) {
+      slice = data_out->GetDataSlice(i);
+      
+      status = Emit_data_slice(iohandle,
+			       slice->GetDataType(),
+			       slice->GetDataSize(),
+			       slice->GetData());
+    }
+  }
+
+  Emit_stop(&iohandle);
 }

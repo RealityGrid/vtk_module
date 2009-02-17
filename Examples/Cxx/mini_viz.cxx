@@ -134,7 +134,7 @@ void redrawCallback(vtkRealityGridIOChannel** io_channels, void* ud) {
   vtkRealityGridDataSlice* slice;
 
   // get data dimensions
-  slices = io_channels[0]->GetDataSlices();
+  slices = io_channels[0]->GetDataSlicesIn();
   slice = slices->GetDataSlice(0);
   data_size = *((int*) slice->GetData());
   num_points = data_size * data_size;

@@ -128,7 +128,7 @@ bool vtkRealityGridDataReader::PollRealityGrid() {
   int status;
   bool updated = false;
 
-  status = Steering_control(loop_number++,
+  status = Steering_control(loop_number,
 			    &numParamsChanged,
 			    changedParamLabels,
 			    &numRecvdCmds,
@@ -146,9 +146,11 @@ bool vtkRealityGridDataReader::PollRealityGrid() {
     // update the IO channels
     for(int j = 0; j < REG_INITIAL_NUM_IOTYPES; j++) {
       if(recvdCmds[i] == io_channels[j]->GetHandle())
-	updated = io_channels[j]->Update();
+	updated = io_channels[j]->Update(loop_number);
     }
   }
+
+  loop_number++;
 
   return updated;
 }

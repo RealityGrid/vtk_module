@@ -41,9 +41,11 @@ class REGVTK_STEERING_EXPORT vtkRealityGridIOChannel : public vtkObject {
   int handle;
   char* name;
   int io_direction;
-  vtkRealityGridDataSliceCollection* data_slices;
+  vtkRealityGridDataSliceCollection* data_in;
+  vtkRealityGridDataSliceCollection* data_out;
 
   bool RecvData();
+  void SendData(int);
 
  protected:
   vtkRealityGridIOChannel();
@@ -63,9 +65,10 @@ class REGVTK_STEERING_EXPORT vtkRealityGridIOChannel : public vtkObject {
   void SetIODirection(const int);
   int GetIODirection();
 
-  vtkRealityGridDataSliceCollection* GetDataSlices();
+  vtkRealityGridDataSliceCollection* GetDataSlicesIn();
+  vtkRealityGridDataSliceCollection* GetDataSlicesOut();
 
-  bool Update();
+  bool Update(int);
 };
 
 inline int vtkRealityGridIOChannel::GetHandle() {
@@ -80,8 +83,12 @@ inline int vtkRealityGridIOChannel::GetIODirection() {
   return this->io_direction;
 }
 
-inline vtkRealityGridDataSliceCollection* vtkRealityGridIOChannel::GetDataSlices() {
-  return this->data_slices;
+inline vtkRealityGridDataSliceCollection* vtkRealityGridIOChannel::GetDataSlicesIn() {
+  return this->data_in;
+}
+
+inline vtkRealityGridDataSliceCollection* vtkRealityGridIOChannel::GetDataSlicesOut() {
+  return this->data_out;
 }
 
 #define __vtkRealityGridIOChannel_h__
