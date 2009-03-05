@@ -34,6 +34,7 @@
 
 #include "vtkObject.h"
 
+class vtkRealityGridDataReader;
 class vtkRealityGridDataSliceCollection;
 
 class REGVTK_STEERING_EXPORT vtkRealityGridIOChannel : public vtkObject {
@@ -67,6 +68,8 @@ class REGVTK_STEERING_EXPORT vtkRealityGridIOChannel : public vtkObject {
 
   vtkRealityGridDataSliceCollection* GetDataSlicesIn();
   vtkRealityGridDataSliceCollection* GetDataSlicesOut();
+
+  void Register(vtkRealityGridDataReader*, int);
 
   bool Update(int);
 };

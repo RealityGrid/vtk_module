@@ -54,8 +54,6 @@ class REGVTK_STEERING_EXPORT vtkRealityGridDataReader : public vtkObject {
   int num_io_channels;
   vtkRealityGridIOChannel* io_channels[REG_INITIAL_NUM_IOTYPES];
 
-  void* user_data;
-  void (*update_callback) (vtkRealityGridIOChannel**, void*);
   vtkRenderWindowInteractor* interactor;
 
   void InitializeRealityGrid();
@@ -75,14 +73,9 @@ class REGVTK_STEERING_EXPORT vtkRealityGridDataReader : public vtkObject {
   vtkRealityGridIOChannel* GetIOChannel(int);
   int GetMaxIOChannels();
 
-  void SetUpdateCallback(void (*func)(vtkRealityGridIOChannel** slices, void* user_data)) {
-    this->update_callback = func;
-  }
-  void SetUpdateUserData(void*);
-
   void SetInteractor(vtkRenderWindowInteractor*);
 
-  void RegisterIOChannel(const char*, int, int);
+  void RegisterIOChannel(vtkRealityGridIOChannel*, int);
 
   friend void _poll(vtkObject*, unsigned long, void*, void*);
 };

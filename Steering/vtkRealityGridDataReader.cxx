@@ -57,20 +57,13 @@ vtkRealityGridDataReader* vtkRealityGridDataReader::GetInstance() {
 // instantiate default
 vtkRealityGridDataReader::vtkRealityGridDataReader() {
   for(int i = 0; i < REG_INITIAL_NUM_IOTYPES; i++) {
-    this->io_channels[i] = vtkRealityGridIOChannel::New();
+    this->io_channels[i] = NULL;
   }
   this->interactor = NULL;
-  this->update_callback = NULL;
-  this->user_data = NULL;
   this->InitializeRealityGrid();
 }
 
 vtkRealityGridDataReader::~vtkRealityGridDataReader() {
-  for(int i = 0; i < REG_INITIAL_NUM_IOTYPES; i++) {
-    if(io_channels[i]) {
-      this->io_channels[i]->Delete();
-    }
-  }
   this->FinalizeRealityGrid();
   _instance = NULL;
 }
@@ -78,7 +71,6 @@ vtkRealityGridDataReader::~vtkRealityGridDataReader() {
 void vtkRealityGridDataReader::PrintSelf(ostream& os, vtkIndent indent) {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "Interactor: " << (interactor == NULL ? "not set" : "set") << "\n";
-  os << indent << "Update Callback: " << (update_callback == NULL ? "not set" : "set") << "\n";
   os << indent << "IO Channels: ";
   if(num_io_channels > 0) {
     os << num_io_channels << std::endl;
@@ -100,10 +92,6 @@ void vtkRealityGridDataReader::SetInteractor(vtkRenderWindowInteractor* i) {
   timer_callback->SetClientData((void*) this);
   this->interactor->AddObserver(vtkCommand::TimerEvent, timer_callback);
   this->interactor->CreateTimer(VTKI_TIMER_FIRST);
-}
-
-void vtkRealityGridDataReader::SetUpdateUserData(void* ud) {
-  this->user_data = ud;
 }
 
 // Initialize the RealityGrid steering library
@@ -144,7 +132,7 @@ bool vtkRealityGridDataReader::PollRealityGrid() {
   for(int i = 0; i < numRecvdCmds; i++) {
 
     // update the IO channels
-    for(int j = 0; j < REG_INITIAL_NUM_IOTYPES; j++) {
+    for(int j = 0; j < num_io_channels; j++) {
       if(recvdCmds[i] == io_channels[j]->GetHandle())
 	updated = io_channels[j]->Update(loop_number);
     }
@@ -162,16 +150,14 @@ void vtkRealityGridDataReader::FinalizeRealityGrid() {
 
 // Register an IO channel
 // TODO: check bounds of io_handles[]
-void vtkRealityGridDataReader::RegisterIOChannel(const char* name, int dir, int freq) {
+void vtkRealityGridDataReader::RegisterIOChannel(vtkRealityGridIOChannel* c, int freq) {
   int status;
-  int io_handle;
+  int iohandle;
 
-  status = Register_IOType((char*) name, dir, freq, &io_handle);
+  status = Register_IOType(c->GetName(), c->GetIODirection(), freq, &iohandle);
   if(status == REG_SUCCESS) {
-    io_channels[num_io_channels]->SetHandle(io_handle);
-    io_channels[num_io_channels]->SetName(name);
-    io_channels[num_io_channels]->SetIODirection(dir);
-    num_io_channels++;
+    c->SetHandle(iohandle);
+    io_channels[num_io_channels++] = c;
   }
 }
 
@@ -184,17 +170,8 @@ void _poll(vtkObject* obj, unsigned long eid, void* cd, void* calld) {
   // get vtkRealityGridDataReader instance
   vtkRealityGridDataReader* reader = (vtkRealityGridDataReader*) cd;
 
-  // return if there is no update callback registered.
-  if(reader->update_callback == NULL) {
-    // reset timer
-    i->CreateTimer(VTKI_TIMER_UPDATE);
-    return;
-  }
-
   // do ReG stuff and re-render if necessary
   if(reader->PollRealityGrid()) {
-    // call update callback
-    reader->update_callback(reader->io_channels, reader->user_data);
 
     // re-render
     i->Render();

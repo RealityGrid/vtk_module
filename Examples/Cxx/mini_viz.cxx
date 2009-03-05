@@ -47,13 +47,16 @@
 #include "vtkTextActor.h"
 #include "vtkTextProperty.h"
 
+#include "vtkCallbackCommand.h"
+#include "vtkCommand.h"
+
 // struct for passing components to callbacks
 struct UserData {
   vtkPolyData* surface;
   vtkTextActor* text;
 };
 
-void redrawCallback(vtkRealityGridIOChannel**, void*);
+void redrawCallback(vtkObject*, unsigned long, void*, void*);
 
 int main(int argc, char** argv) {
   vtkPolyData* surface = vtkPolyData::New();
@@ -105,10 +108,18 @@ int main(int argc, char** argv) {
   UserData* ud = new UserData();
   ud->surface = surface;
   ud->text = text;
+
+  vtkCallbackCommand* data_callback = vtkCallbackCommand::New();
+  data_callback->SetCallback(redrawCallback);
+  data_callback->SetClientData((void*) ud);
+
+  vtkRealityGridIOChannel* io_in = vtkRealityGridIOChannel::New();
+  io_in->SetName("mini_app in");
+  io_in->SetIODirection(REG_IO_IN);
+  io_in->AddObserver(vtkCommand::UserEvent, data_callback);
+
   vtkRealityGridDataReader* reader = vtkRealityGridDataReader::New();
-  reader->RegisterIOChannel("mini_app in", REG_IO_IN, 10);
-  reader->SetUpdateCallback(redrawCallback);
-  reader->SetUpdateUserData((void*) ud);
+  reader->RegisterIOChannel(io_in, 10);
   reader->SetInteractor(reni);
 
   reader->Print(std::cout);
@@ -121,20 +132,23 @@ int main(int argc, char** argv) {
   return 0;
 }
 
-void redrawCallback(vtkRealityGridIOChannel** io_channels, void* ud) {
+void redrawCallback(vtkObject* obj, unsigned long eid, void* cd, void* calld) {
   int data_size;
   int num_points, index;
   float* data;
   char label[20];
   vtkPoints* points = vtkPoints::New();
   vtkCellArray* strips = vtkCellArray::New();
-  vtkPolyData* surface = ((UserData*) ud)->surface;
-  vtkTextActor* text = ((UserData*) ud)->text;
+  vtkPolyData* surface = ((UserData*) cd)->surface;
+  vtkTextActor* text = ((UserData*) cd)->text;
   vtkRealityGridDataSliceCollection* slices;
   vtkRealityGridDataSlice* slice;
 
+  // get the io channel with the new data
+  vtkRealityGridIOChannel* ioc = vtkRealityGridIOChannel::SafeDownCast(obj);
+
   // get data dimensions
-  slices = io_channels[0]->GetDataSlicesIn();
+  slices = ioc->GetDataSlicesIn();
   slice = slices->GetDataSlice(0);
   data_size = *((int*) slice->GetData());
   num_points = data_size * data_size;

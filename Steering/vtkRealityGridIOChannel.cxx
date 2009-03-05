@@ -28,10 +28,12 @@
   Author: Robert Haines
 ---------------------------------------------------------------------------*/
 
+#include "vtkRealityGridDataReader.h"
 #include "vtkRealityGridDataSlice.h"
 #include "vtkRealityGridDataSliceCollection.h"
 #include "vtkRealityGridIOChannel.h"
 
+#include "vtkCommand.h"
 #include "vtkObjectFactory.h"
 
 #include "ReG_Steer_Appside.h"
@@ -90,6 +92,10 @@ void vtkRealityGridIOChannel::SetIODirection(const int d) {
   this->io_direction = d;
 }
 
+void vtkRealityGridIOChannel::Register(vtkRealityGridDataReader* dr, int f) {
+  dr->RegisterIOChannel(this, f);
+}
+
 bool vtkRealityGridIOChannel::Update(int loop) {
   bool result = false;
 
@@ -105,6 +111,9 @@ bool vtkRealityGridIOChannel::Update(int loop) {
     result = RecvData();
     break;
   }
+
+  if(result)
+    InvokeEvent(vtkCommand::UserEvent, NULL);
 
   return result;
 }
