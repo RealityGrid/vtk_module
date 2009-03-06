@@ -54,6 +54,7 @@
 struct UserData {
   vtkPolyData* surface;
   vtkTextActor* text;
+  int num_points;
 };
 
 void redrawCallback(vtkObject*, unsigned long, void*, void*);
@@ -108,6 +109,7 @@ int main(int argc, char** argv) {
   UserData* ud = new UserData();
   ud->surface = surface;
   ud->text = text;
+  ud->num_points = -1;
 
   vtkCallbackCommand* data_callback = vtkCallbackCommand::New();
   data_callback->SetCallback(redrawCallback);
@@ -134,11 +136,10 @@ int main(int argc, char** argv) {
 
 void redrawCallback(vtkObject* obj, unsigned long eid, void* cd, void* calld) {
   int data_size;
-  int num_points, index;
+  int num_points, num_points_old, index;
   float* data;
   char label[20];
-  vtkPoints* points = vtkPoints::New();
-  vtkCellArray* strips = vtkCellArray::New();
+  vtkPoints* points;
   vtkPolyData* surface = ((UserData*) cd)->surface;
   vtkTextActor* text = ((UserData*) cd)->text;
   vtkRealityGridDataSliceCollection* slices;
@@ -152,36 +153,61 @@ void redrawCallback(vtkObject* obj, unsigned long eid, void* cd, void* calld) {
   slice = slices->GetDataSlice(0);
   data_size = *((int*) slice->GetData());
   num_points = data_size * data_size;
+  num_points_old = ((UserData*) cd)->num_points;
 
-  // get points
   slice = slices->GetDataSlice(1);
   data = (float*) slice->GetData();
-  points->Allocate(num_points);
-  index = 0;
-  for(int j = 0; j < data_size; j++) {
-    for(int i = 0; i < data_size; i++) {
-      points->InsertNextPoint(i, j, data[index++]);
-    }
-  }
 
-  // create strips
-  for(int i = 1; i < data_size; i++) {
-    strips->InsertNextCell(data_size * 2);
+  // only create a new set of points, re-organise triangle
+  // strips and alter text if data size has changed
+  if(num_points != num_points_old) {
+    // set points
+    points = vtkPoints::New();
+    points->SetNumberOfPoints(num_points);
+    index = 0;
     for(int j = 0; j < data_size; j++) {
-      strips->InsertCellPoint((data_size * j) + (i - 1));
-      strips->InsertCellPoint((data_size * j) + i);
+      for(int i = 0; i < data_size; i++) {
+	points->SetPoint(index, i, j, data[index]);
+	index++;
+      }
     }
+
+    // create strips
+    vtkCellArray* strips = vtkCellArray::New();
+    for(int i = 1; i < data_size; i++) {
+      strips->InsertNextCell(data_size * 2);
+      for(int j = 0; j < data_size; j++) {
+	strips->InsertCellPoint((data_size * j) + (i - 1));
+	strips->InsertCellPoint((data_size * j) + i);
+      }
+    }
+
+    // build surface
+    surface->SetPoints(points);
+    surface->SetStrips(strips);
+
+    // update text
+    sprintf(label, "Data size: %6d", num_points);
+    text->SetInput(label);
+
+    // clean up
+    points->Delete();
+    strips->Delete();
+
+    // save new number of points for next time
+    ((UserData*) cd)->num_points = num_points;
   }
+  else {
+    // set points
+    points = surface->GetPoints();
+    index = 0;
+    for(int j = 0; j < data_size; j++) {
+      for(int i = 0; i < data_size; i++) {
+	points->SetPoint(index, i, j, data[index]);
+	index++;
+      }
+    }
 
-  // build surface
-  surface->SetPoints(points);
-  surface->SetStrips(strips);
-
-  // update text
-  sprintf(label, "Data size: %6d", (data_size * data_size));
-  text->SetInput(label);
-
-  // clean up
-  points->Delete();
-  strips->Delete();
+    points->Modified();
+  }
 }
