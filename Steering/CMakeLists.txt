@@ -37,10 +37,36 @@ set(Steering_SRCS
   vtkRealityGridDataSliceCollection.cxx
   vtkRealityGridIOChannel.cxx
 )
+
+# Get list of headers for installation
 foreach(file ${Steering_SRCS})
   string(REPLACE ".cxx" ".h" temp ${file})
   set(Steering_INCS ${Steering_INCS} ${temp})
 endforeach(file ${Steering_SRCS})
+
+# Generate typed data slice classes
+set(TYPES Int Char Float Double)
+foreach(Type ${TYPES})
+  string(TOLOWER ${Type} type)
+  string(TOUPPER ${Type} TYPE)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/vtkRealityGridTypedDataSlice.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/vtkRealityGrid${Type}DataSlice.h
+  )
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/vtkRealityGridTypedDataSlice.cxx.in
+    ${CMAKE_CURRENT_BINARY_DIR}/vtkRealityGrid${Type}DataSlice.cxx
+  )
+  set(Steering_INCS ${Steering_INCS}
+    ${CMAKE_CURRENT_BINARY_DIR}/vtkRealityGrid${Type}DataSlice.h
+  )
+  set(Steering_SRCS ${Steering_SRCS}
+    ${CMAKE_CURRENT_BINARY_DIR}/vtkRealityGrid${Type}DataSlice.cxx
+  )
+endforeach(Type ${TYPES})
+
+# add include directory for the generated classes
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 # Create the vtkRealityGridSteering C++ library.
 add_library(vtkRealityGridSteering ${Steering_SRCS})

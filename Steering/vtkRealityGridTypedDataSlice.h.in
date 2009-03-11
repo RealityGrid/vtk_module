@@ -28,37 +28,45 @@
   Author: Robert Haines
 ---------------------------------------------------------------------------*/
 
+#ifndef __vtkRealityGrid${Type}DataSlice_h__
+
+#include "vtkSteeringWin32Header.h"
 #include "vtkRealityGridDataSlice.h"
 
-#include "vtkRealityGridCharDataSlice.h"
-#include "vtkRealityGridDoubleDataSlice.h"
-#include "vtkRealityGridFloatDataSlice.h"
-#include "vtkRealityGridIntDataSlice.h"
+class vtk${Type}Array;
 
-vtkCxxRevisionMacro(vtkRealityGridDataSlice, "Revision: 0.01");
+class REGVTK_STEERING_EXPORT vtkRealityGrid${Type}DataSlice : public vtkRealityGridDataSlice {
+ private:
+  ${type}* data;
+  vtk${Type}Array* array;
 
-// instantiate default
-vtkRealityGridDataSlice::vtkRealityGridDataSlice() {
-  this->size = 0;
-}
+ protected:
+  vtkRealityGrid${Type}DataSlice();
+  ~vtkRealityGrid${Type}DataSlice();
 
-void vtkRealityGridDataSlice::PrintSelf(ostream& os, vtkIndent indent) {
-  os << indent << "Data size: " << this->size << "\n";
-}
+ public:
+  static vtkRealityGrid${Type}DataSlice* New();
+  vtkTypeRevisionMacro(vtkRealityGrid${Type}DataSlice,vtkRealityGridDataSlice);
+  void PrintSelf(ostream& os, vtkIndent indent);
 
-vtkRealityGridDataSlice* vtkRealityGridDataSlice::CreateDataSlice(int type) {
-  switch(type) {
-  case REG_INT:
-    return vtkRealityGridIntDataSlice::New();
-  case REG_CHAR:
-    return vtkRealityGridCharDataSlice::New();
-  case REG_FLOAT:
-    return vtkRealityGridFloatDataSlice::New();
-  case REG_DOUBLE:
-    return vtkRealityGridDoubleDataSlice::New();
+  int GetDataType() {
+    return REG_${TYPE};
   }
 
-  std::cerr << "Unrecognised data type: " << type << ". Setting to REG_CHAR\n";
+  void* GetVoidData();
+  vtk${Type}Array* GetData();
+  void SetData(void*, int);
+  void SetData(${type}*, int);
+  void SetData(vtk${Type}Array*);
+};
 
-  return vtkRealityGridCharDataSlice::New();
+inline void* vtkRealityGrid${Type}DataSlice::GetVoidData() {
+  return (void*) this->data;
 }
+
+inline vtk${Type}Array* vtkRealityGrid${Type}DataSlice::GetData() {
+  return this->data == NULL ? NULL : this->array;
+}
+
+#define __vtkRealityGrid${Type}DataSlice_h__
+#endif // __vtkRealityGrid${Type}DataSlice_h__

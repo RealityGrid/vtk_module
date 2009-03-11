@@ -37,39 +37,26 @@
 #include "ReG_Steer_types.h"
 
 class REGVTK_STEERING_EXPORT vtkRealityGridDataSlice : public vtkObject {
- private:
-  int type;
-  int size;
-  void* data;
-
  protected:
+  int size;
+
   vtkRealityGridDataSlice();
-  ~vtkRealityGridDataSlice();
+  ~vtkRealityGridDataSlice() {}
 
  public:
-  static vtkRealityGridDataSlice* New();
   vtkTypeRevisionMacro(vtkRealityGridDataSlice,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  int GetDataType();
+  virtual int GetDataType() = 0;
   int GetDataSize();
-  void* GetData();
+  virtual void* GetVoidData() = 0;
+  virtual void SetData(void*, int) = 0;
 
-  void SetDataType(int);
-  void SetDataSize(int);
-  void SetData(void*);
+  static vtkRealityGridDataSlice* CreateDataSlice(int);
 };
-
-inline int vtkRealityGridDataSlice::GetDataType() {
-  return this->type;
-}
 
 inline int vtkRealityGridDataSlice::GetDataSize() {
   return this->size;
-}
-
-inline void* vtkRealityGridDataSlice::GetData() {
-  return this->data;
 }
 
 #define __vtkRealityGridDataSlice_h__

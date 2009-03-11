@@ -151,12 +151,12 @@ void redrawCallback(vtkObject* obj, unsigned long eid, void* cd, void* calld) {
   // get data dimensions
   slices = ioc->GetDataSlicesIn();
   slice = slices->GetDataSlice(0);
-  data_size = *((int*) slice->GetData());
+  data_size = *((int*) slice->GetVoidData());
   num_points = data_size * data_size;
   num_points_old = ((UserData*) cd)->num_points;
 
   slice = slices->GetDataSlice(1);
-  data = (float*) slice->GetData();
+  data = (float*) slice->GetVoidData();
 
   // only create a new set of points, re-organise triangle
   // strips and alter text if data size has changed

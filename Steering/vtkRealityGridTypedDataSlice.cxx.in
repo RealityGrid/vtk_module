@@ -28,37 +28,51 @@
   Author: Robert Haines
 ---------------------------------------------------------------------------*/
 
-#include "vtkRealityGridDataSlice.h"
+#include "vtkRealityGrid${Type}DataSlice.h"
 
-#include "vtkRealityGridCharDataSlice.h"
-#include "vtkRealityGridDoubleDataSlice.h"
-#include "vtkRealityGridFloatDataSlice.h"
-#include "vtkRealityGridIntDataSlice.h"
+#include "vtk${Type}Array.h"
+#include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkRealityGridDataSlice, "Revision: 0.01");
+#include "ReG_Steer_types.h"
 
-// instantiate default
-vtkRealityGridDataSlice::vtkRealityGridDataSlice() {
-  this->size = 0;
+vtkCxxRevisionMacro(vtkRealityGrid${Type}DataSlice, "Revision: 0.01");
+vtkStandardNewMacro(vtkRealityGrid${Type}DataSlice);
+
+vtkRealityGrid${Type}DataSlice::vtkRealityGrid${Type}DataSlice() {
+  this->data = NULL;
+  this->array = vtk${Type}Array::New();
 }
 
-void vtkRealityGridDataSlice::PrintSelf(ostream& os, vtkIndent indent) {
-  os << indent << "Data size: " << this->size << "\n";
+vtkRealityGrid${Type}DataSlice::~vtkRealityGrid${Type}DataSlice() {
+  this->array->Delete();
+
+  if(this->data)
+    delete [] this->data;
 }
 
-vtkRealityGridDataSlice* vtkRealityGridDataSlice::CreateDataSlice(int type) {
-  switch(type) {
-  case REG_INT:
-    return vtkRealityGridIntDataSlice::New();
-  case REG_CHAR:
-    return vtkRealityGridCharDataSlice::New();
-  case REG_FLOAT:
-    return vtkRealityGridFloatDataSlice::New();
-  case REG_DOUBLE:
-    return vtkRealityGridDoubleDataSlice::New();
-  }
+void vtkRealityGrid${Type}DataSlice::PrintSelf(ostream& os, vtkIndent indent) {
+  os << indent << "vtkRealityGrid${Type}DataSlice (" << this << ")\n";
+  this->Superclass::PrintSelf(os, indent.GetNextIndent());  
+}
 
-  std::cerr << "Unrecognised data type: " << type << ". Setting to REG_CHAR\n";
+void vtkRealityGrid${Type}DataSlice::SetData(vtk${Type}Array* a) {
+  if(this->array && this->array != a)
+    this->array->Delete();
 
-  return vtkRealityGridCharDataSlice::New();
+  this->array = a;
+
+  if(this->data)
+    delete [] this->data;
+
+  this->data = a->GetPointer(0);
+}
+
+void vtkRealityGrid${Type}DataSlice::SetData(${type}* d, int s) {
+  this->data = d;
+  this->size = s;
+  this->array->SetArray(d, s, 1);
+}
+
+void vtkRealityGrid${Type}DataSlice::SetData(void* d, int s) {
+  this->SetData((${type}*) d, s);
 }

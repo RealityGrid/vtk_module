@@ -140,53 +140,44 @@ bool vtkRealityGridIOChannel::RecvData() {
       slice = data_in->GetDataSlice(slices_read);
 
       if(slice == NULL) {
-	slice = vtkRealityGridDataSlice::New();
+	slice = vtkRealityGridDataSlice::CreateDataSlice(data_type);
 	data_in->AddItem(slice);
       }
 
+      // get pointer to data from slice
+      data = slice->GetVoidData();
+
       switch(data_type) {
       case REG_INT:
-	data = slice->GetData();
 	if(data_count > slice->GetDataSize()) {
 	  if(data) delete [] (int*) data;
 	  data = new int[data_count];
-	  slice->SetDataSize(data_count);
-	  slice->SetData(data);
+	  slice->SetData(data, data_count);
 	}
-	slice->SetDataType(REG_INT);
 	status = Consume_data_slice(iohandle, data_type, data_count, data);
 	break;
       case REG_CHAR:
-	data = slice->GetData();
 	if(data_count > slice->GetDataSize()) {
 	  if(data) delete [] (char*) data;
 	  data = new char[data_count];
-	  slice->SetDataSize(data_count);
-	  slice->SetData(data);
+	  slice->SetData(data, data_count);
 	}
-	slice->SetDataType(REG_CHAR);
 	status = Consume_data_slice(iohandle, data_type, data_count, data);
 	break;
       case REG_FLOAT:
-	data = slice->GetData();
 	if(data_count > slice->GetDataSize()) {
 	  if(data) delete [] (float*) data;
 	  data = new float[data_count];
-	  slice->SetDataSize(data_count);
-	  slice->SetData(data);
+	  slice->SetData(data, data_count);
 	}
-	slice->SetDataType(REG_FLOAT);
 	status = Consume_data_slice(iohandle, data_type, data_count, data);
 	break;
-      case REG_DBL:
-	data = slice->GetData();
+      case REG_DOUBLE:
 	if(data_count > slice->GetDataSize()) {
 	  if(data) delete [] (double*) data;
 	  data = new double[data_count];
-	  slice->SetDataSize(data_count);
-	  slice->SetData(data);
+	  slice->SetData(data, data_count);
 	}
-	slice->SetDataType(REG_DBL);
 	status = Consume_data_slice(iohandle, data_type, data_count, data);
 	break;
       } // end switch(data_type)
@@ -220,7 +211,7 @@ void vtkRealityGridIOChannel::SendData(int loop) {
       status = Emit_data_slice(iohandle,
 			       slice->GetDataType(),
 			       slice->GetDataSize(),
-			       slice->GetData());
+			       slice->GetVoidData());
     }
   }
 
