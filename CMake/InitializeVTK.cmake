@@ -89,68 +89,68 @@ set(REGVTK_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 # Python
 #
 
-#if(VTK_WRAP_PYTHON)
-#
-#  option(REGVTK_WRAP_PYTHON
-#         "Wrap classes into the Python interpreted language."
-#         OFF)
-#
-#  if(REGVTK_WRAP_PYTHON)
-#    include(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
-#    if(WIN32)
-#      if(NOT BUILD_SHARED_LIBS)
-#        message(FATAL_ERROR "Python support requires BUILD_SHARED_LIBS to be ON.")
-#        set(REGVTK_CAN_BUILD 0)
-#      endif(NOT BUILD_SHARED_LIBS)
-#    endif(WIN32)
-#  endif(REGVTK_WRAP_PYTHON)
-#
-#else(VTK_WRAP_PYTHON)
-#
-#  if(REGVTK_WRAP_PYTHON)
-#    message("Warning. REGVTK_WRAP_PYTHON is ON but the VTK version you have "
-#            "chosen has not support for Python (VTK_WRAP_PYTHON is OFF).  "
-#            "Please set REGVTK_WRAP_PYTHON to OFF.")
-#    set(REGVTK_WRAP_PYTHON OFF)
-#  endif(REGVTK_WRAP_PYTHON)
-#
-#endif(VTK_WRAP_PYTHON)
+if(VTK_WRAP_PYTHON)
+
+  option(REGVTK_WRAP_PYTHON
+         "Wrap classes into the Python interpreted language."
+         OFF)
+
+  if(REGVTK_WRAP_PYTHON)
+    include(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
+    if(WIN32)
+      if(NOT BUILD_SHARED_LIBS)
+        message(FATAL_ERROR "Python support requires BUILD_SHARED_LIBS to be ON.")
+        set(REGVTK_CAN_BUILD 0)
+      endif(NOT BUILD_SHARED_LIBS)
+    endif(WIN32)
+  endif(REGVTK_WRAP_PYTHON)
+
+else(VTK_WRAP_PYTHON)
+
+  if(REGVTK_WRAP_PYTHON)
+    message("Warning. REGVTK_WRAP_PYTHON is ON but the VTK version you have "
+            "chosen has not support for Python (VTK_WRAP_PYTHON is OFF).  "
+            "Please set REGVTK_WRAP_PYTHON to OFF.")
+    set(REGVTK_WRAP_PYTHON OFF)
+  endif(REGVTK_WRAP_PYTHON)
+
+endif(VTK_WRAP_PYTHON)
 
 #
 # Java
 #
 
-#if(VTK_WRAP_JAVA)
-#
-#  option(REGVTK_WRAP_JAVA
-#         "Wrap classes into the Java interpreted language."
-#         OFF)
-#
-#  if(REGVTK_WRAP_JAVA)
-#    set(VTK_WRAP_JAVA3_INIT_DIR "${REGVTK_SOURCE_DIR}/Wrapping")
-#    include(${VTK_CMAKE_DIR}/vtkWrapJava.cmake)
-#    if(WIN32)
-#      if(NOT BUILD_SHARED_LIBS)
-#        message(FATAL_ERROR "Java support requires BUILD_SHARED_LIBS to be ON.")
-#        set(REGVTK_CAN_BUILD 0)
-#      endif(NOT BUILD_SHARED_LIBS)
-#    endif(WIN32)
-#
-#    # Tell the java wrappers where to go.
-#    set(VTK_JAVA_HOME ${REGVTK_BINARY_DIR}/java/regvtk)
-#    make_directory(${VTK_JAVA_HOME})
-#  endif(REGVTK_WRAP_JAVA)
-#
-#else(VTK_WRAP_JAVA)
-#
-#  if(REGVTK_WRAP_JAVA)
-#    message("Warning. REGVTK_WRAP_JAVA is ON but the VTK version you have "
-#            "chosen has not support for Java (VTK_WRAP_JAVA is OFF).  "
-#            "Please set REGVTK_WRAP_JAVA to OFF.")
-#    set(REGVTK_WRAP_JAVA OFF)
-#  endif(REGVTK_WRAP_JAVA)
-#
-#endif(VTK_WRAP_JAVA)
+if(VTK_WRAP_JAVA)
+
+  option(REGVTK_WRAP_JAVA
+         "Wrap classes into the Java interpreted language."
+         OFF)
+
+  if(REGVTK_WRAP_JAVA)
+    set(VTK_WRAP_JAVA3_INIT_DIR "${REGVTK_SOURCE_DIR}/Wrapping")
+    include(${VTK_CMAKE_DIR}/vtkWrapJava.cmake)
+    if(WIN32)
+      if(NOT BUILD_SHARED_LIBS)
+        message(FATAL_ERROR "Java support requires BUILD_SHARED_LIBS to be ON.")
+        set(REGVTK_CAN_BUILD 0)
+      endif(NOT BUILD_SHARED_LIBS)
+    endif(WIN32)
+
+    # Tell the java wrappers where to go.
+    set(VTK_JAVA_HOME ${REGVTK_BINARY_DIR}/java/vtk)
+    make_directory(${VTK_JAVA_HOME})
+  endif(REGVTK_WRAP_JAVA)
+
+else(VTK_WRAP_JAVA)
+
+  if(REGVTK_WRAP_JAVA)
+    message("Warning. REGVTK_WRAP_JAVA is ON but the VTK version you have "
+            "chosen has not support for Java (VTK_WRAP_JAVA is OFF).  "
+            "Please set REGVTK_WRAP_JAVA to OFF.")
+    set(REGVTK_WRAP_JAVA OFF)
+  endif(REGVTK_WRAP_JAVA)
+
+endif(VTK_WRAP_JAVA)
 
 # Setup our local hints file in case wrappers need them.
-#set(VTK_WRAP_HINTS ${REGVTK_SOURCE_DIR}/Wrapping/hints)
+set(VTK_WRAP_HINTS ${REGVTK_SOURCE_DIR}/Wrapping/hints)

@@ -77,6 +77,12 @@ target_link_libraries(vtkRealityGridSteering
 )
 set(Steering_INSTALL_TARGETS vtkRealityGridSteering)
 
+# Label certain classes as abstract for the wrappers
+set_source_files_properties(
+  vtkRealityGridDataSlice.cxx
+  ABSTRACT
+)
+
 # Create the vtkRealityGridSteering Tcl library.
 if(VTK_WRAP_TCL AND REGVTK_WRAP_TCL)
   VTK_WRAP_TCL3(vtkRealityGridSteeringTCL SteeringTCL_SRCS "${Steering_SRCS}" "")

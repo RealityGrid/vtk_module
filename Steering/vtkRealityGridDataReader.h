@@ -77,7 +77,9 @@ class REGVTK_STEERING_EXPORT vtkRealityGridDataReader : public vtkObject {
 
   void RegisterIOChannel(vtkRealityGridIOChannel*, int);
 
+  //BTX
   friend void _poll(vtkObject*, unsigned long, void*, void*);
+  //ETX
 };
 
 inline vtkRealityGridIOChannel* vtkRealityGridDataReader::GetIOChannel(int i) {
