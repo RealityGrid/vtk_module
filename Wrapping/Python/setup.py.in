@@ -1,0 +1,100 @@
+#!/usr/bin/env python
+#
+#  CMake build machinery for the RealityGrid VTK Data Reader Module.
+#
+#  (C) Copyright 2009, University of Manchester, United Kingdom,
+#  all rights reserved.
+#
+#  This software is produced by the Supercomputing, Visualization and
+#  e-Science Group, Manchester Computing, University of Manchester
+#  as part of the RealityGrid project (http://www.realitygrid.org),
+#  funded by the EPSRC under grants GR/R67699/01 and GR/R67699/02.
+#
+#  LICENCE TERMS
+#
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions
+#  are met:
+#  1. Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+#  THIS MATERIAL IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+#  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+#  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+#  A PARTICULAR PURPOSE ARE DISCLAIMED. THE ENTIRE RISK AS TO THE QUALITY
+#  AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE PROGRAM PROVE
+#  DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR
+#  CORRECTION.
+#
+#  Author.........: Robert Haines
+#----------------------------------------------------------------------
+
+import sys
+import string
+import os
+import os.path
+from distutils.core import setup
+from distutils.sysconfig import get_config_var
+from distutils.command.install_data import install_data
+
+has_setup_tools = 0
+try:
+    from setuptools import setup
+except ImportError:
+    pass
+else:
+    has_setup_tools = 1
+
+# build configuration
+regvtk_version = "@REGVTK_VERSION@"
+regvtk_lib_dir = "@LIBRARY_OUTPUT_PATH@"
+
+regvtk_lib_install = 'RealityGrid/vtk'
+
+if os.name == 'posix':
+    dir = regvtk_lib_dir
+    prefix = 'libvtkRealityGrid'
+    suffix = 'Python' + get_config_var('SO')
+else:
+    dir = regvtk_lib_dir.replace('/', '\\')
+    prefix = 'vtkRealityGrid'
+    suffix = 'Python.pyd'
+    regvtk_lib_install.replace('/', '\\')
+
+regvtk_libs = [os.path.abspath(os.path.join(dir, prefix+'Steering'+suffix))]
+
+# needed for older pythons
+def mk_dict(**kw):
+    return kw
+
+class my_install_data (install_data):
+    def finalize_options (self):
+        """Needed to make this thing work properly."""
+        self.set_undefined_options('install',
+                                   ('install_lib', 'install_dir'),
+                                   ('root', 'root'),
+                                   ('force', 'force'),
+                                   )
+
+opts = mk_dict(name             = "RealityGrid VTK Modules",
+               version          = regvtk_version,
+               description      = "The RealityGrid Steering Library VTK Modules",
+               author           = "Robert Haines, Stephen Pickles, Robin Pinning, Andrew Porter",
+               author_email     = "rhaines@manchester.ac.uk",
+               maintainer       = "Robert Haines, University of Manchester",
+               maintainer_email = "comp-steering@listserv.manchester.ac.uk",
+               long_description = "VTK Modules that provide the functionality to read live data from a RealityGrid enabled application.",
+               url              = "http://www.realitygrid.org/",
+               platforms        = ['Any'],
+               cmdclass         = {'install_data': my_install_data},
+               packages         = ['RealityGrid', 'RealityGrid.vtk'],
+               data_files       = [(regvtk_lib_install, regvtk_libs)],
+               )
+
+if has_setup_tools:
+    opts['zip_safe'] = 0
+
+setup(**opts)

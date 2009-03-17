@@ -98,8 +98,10 @@ if(VTK_WRAP_PYTHON AND REGVTK_WRAP_PYTHON)
   add_library(vtkRealityGridSteeringPython MODULE vtkRealityGridSteeringPythonInit.cxx)
   target_link_libraries(vtkRealityGridSteeringPythonD vtkRealityGridSteering vtkCommon vtkCommonPythonD)
   target_link_libraries(vtkRealityGridSteeringPython vtkRealityGridSteeringPythonD)
-  set(Steering_INSTALL_TARGETS ${Steering_INSTALL_TARGETS} vtkRealityGridSteeringPythonD vtkRealityGridSteeringPython)
+  set(Steering_INSTALL_TARGETS ${Steering_INSTALL_TARGETS} vtkRealityGridSteeringPythonD)
 
+  # install rules for python stuff
+  add_subdirectory(../Wrapping/Python ${REGVTK_BINARY_DIR}/Wrapping/Python)
 endif(VTK_WRAP_PYTHON AND REGVTK_WRAP_PYTHON)
 
 # Create the vtkRealityGridSteering Java library.
@@ -108,11 +110,13 @@ if(VTK_WRAP_JAVA AND REGVTK_WRAP_JAVA)
   add_library(vtkRealityGridSteeringJava SHARED ${SteeringJava_SRCS})
   target_link_libraries(vtkRealityGridSteeringJava vtkRealityGridSteering vtkCommonJava)
   set(Steering_INSTALL_TARGETS ${Steering_INSTALL_TARGETS} vtkRealityGridSteeringJava)
+
+  # build jar file
+  add_subdirectory(../Wrapping/Java ${REGVTK_BINARY_DIR}/Wrapping/Java)
 endif(VTK_WRAP_JAVA AND REGVTK_WRAP_JAVA)
 
 # install rules
-install(TARGETS
-  ${Steering_INSTALL_TARGETS}
+install(TARGETS ${Steering_INSTALL_TARGETS}
   LIBRARY DESTINATION ${REGVTK_LIB_INSTALL}
 )
 install(FILES ${Steering_INCS}
