@@ -15,7 +15,7 @@ bin directories of the install or build.
 
 You can also input the path by hand into CMake.
 
-Visualization Toolkit (VTK) 5.0 (or later)
+Visualization Toolkit (VTK) 5.2 (or later)
 
 CMake (see below) will find VTK if it is in your PATH or if an
 environment variable called VTK_DIR is set to the path containing the
