@@ -115,6 +115,11 @@ if(VTK_WRAP_JAVA AND REGVTK_WRAP_JAVA)
   add_subdirectory(../Wrapping/Java ${REGVTK_BINARY_DIR}/Wrapping/Java)
 endif(VTK_WRAP_JAVA AND REGVTK_WRAP_JAVA)
 
+# set library version numbers
+set_target_properties(${Steering_INSTALL_TARGETS}
+  PROPERTIES ${REGVTK_LIBRARY_VERSION}
+)
+
 # install rules
 install(TARGETS ${Steering_INSTALL_TARGETS}
   LIBRARY DESTINATION ${REGVTK_LIB_INSTALL}
