@@ -31,14 +31,22 @@
 #  Author.........: Robert Haines
 #----------------------------------------------------------------------
 
-add_executable(mini_viz mini_viz.cxx)
+add_executable(mini_viz MACOSX_BUNDLE mini_viz.cxx)
 target_link_libraries(mini_viz
   vtkRealityGridSteering
   vtkRendering
   vtkFiltering
 )
 
+if(APPLE)
+  set(MACOSX_BUNDLE_INFO_STRING "2.5.0, (C) 2000-2009, The University of Manchester.")
+  set(MACOSX_BUNDLE_SHORT_VERSION_STRING "2.5.0")
+  set(MACOSX_BUNDLE_COPYRIGHT "(C) 2000-2009, University of Manchester.")
+endif(APPLE)
+
 # install rules
 install(TARGETS mini_viz
   RUNTIME DESTINATION ${REGVTK_BIN_INSTALL}
+  BUNDLE  DESTINATION ${REGVTK_BIN_INSTALL}
 )
+
