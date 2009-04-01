@@ -39,6 +39,10 @@ enable_language(Java)
 # the set of classes to build
 set(REGVTK_JAVA_DEPENDENCIES "")
 include(${REGVTK_BINARY_DIR}/Steering/JavaDependencies.cmake)
+set_source_files_properties(
+  ${VTK_JAVA_DEPENDENCIES}
+  PROPERTIES GENERATED TRUE
+)
 
 # add the directory that the java files are generated in to the classpath
 include_directories(${REGVTK_BINARY_DIR}/java)

@@ -40,6 +40,8 @@ class vtkRenderWindowInteractor;
 
 class vtkRealityGridIOChannel;
 
+void _poll(vtkObject*, unsigned long, void*, void*);
+
 class REGVTK_STEERING_EXPORT vtkRealityGridDataReader : public vtkObject {
  private:
   static vtkRealityGridDataReader* _instance;
