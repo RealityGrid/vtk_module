@@ -1,5 +1,15 @@
-Release Notes for the RealityGrid Steering Library
---------------------------------------------------
+Release Notes for the RealityGrid Steering Library VTK Data Reader
+------------------------------------------------------------------
+
+Version 3.0.0
+-------------
+
+Minor changes to bring things up to date for version 3.0.0 of the
+Steering Library
+
+ * Minor changes to ensure compatibility with GCC 4.2.4 and CMake 2.6.3
+ * Minor change to cast a string constant to a char* to silence compiler.
+ * Update the licence in each file. Also add a LICENCE file at the top-level.
 
 Version 2.5.0
 -------------
