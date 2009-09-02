@@ -105,7 +105,7 @@ void vtkRealityGridDataReader::InitializeRealityGrid() {
 
   // initialise steering library
   Steering_enable(REG_TRUE);
-  Steering_initialize("RealityGrid VTK Data Reader", 0, NULL);
+  Steering_initialize((char*) "RealityGrid VTK Data Reader", 0, NULL);
 
   loop_number = 0;
   num_io_channels = 0;
