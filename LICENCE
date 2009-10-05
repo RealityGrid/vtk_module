@@ -1,4 +1,4 @@
-/*
+
   The RealityGrid Steering Library VTK Data Reader
 
   Copyright (c) 2002-2009, University of Manchester, United Kingdom.
@@ -41,75 +41,3 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-
-  Author: Robert Haines
- */
-
-#ifndef __vtkRealityGridIOChannel_h__
-
-#include "vtkSteeringWin32Header.h"
-
-#include "vtkObject.h"
-
-class vtkRealityGridDataReader;
-class vtkRealityGridDataSliceCollection;
-
-class REGVTK_STEERING_EXPORT vtkRealityGridIOChannel : public vtkObject {
- private:
-  int handle;
-  char* name;
-  int io_direction;
-  vtkRealityGridDataSliceCollection* data_in;
-  vtkRealityGridDataSliceCollection* data_out;
-
-  bool RecvData();
-  void SendData(int);
-
- protected:
-  vtkRealityGridIOChannel();
-  ~vtkRealityGridIOChannel();
-
- public:
-  static vtkRealityGridIOChannel* New();
-  vtkTypeRevisionMacro(vtkRealityGridIOChannel,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
-
-  void SetHandle(const int);
-  int GetHandle();
-
-  void SetName(const char*);
-  char* GetName();
-
-  void SetIODirection(const int);
-  int GetIODirection();
-
-  vtkRealityGridDataSliceCollection* GetDataSlicesIn();
-  vtkRealityGridDataSliceCollection* GetDataSlicesOut();
-
-  void Register(vtkRealityGridDataReader*, int);
-
-  bool Update(int);
-};
-
-inline int vtkRealityGridIOChannel::GetHandle() {
-  return this->handle;
-}
-
-inline char* vtkRealityGridIOChannel::GetName() {
-  return this->name;
-}
-
-inline int vtkRealityGridIOChannel::GetIODirection() {
-  return this->io_direction;
-}
-
-inline vtkRealityGridDataSliceCollection* vtkRealityGridIOChannel::GetDataSlicesIn() {
-  return this->data_in;
-}
-
-inline vtkRealityGridDataSliceCollection* vtkRealityGridIOChannel::GetDataSlicesOut() {
-  return this->data_out;
-}
-
-#define __vtkRealityGridIOChannel_h__
-#endif // __vtkRealityGridIOChannel_h__
