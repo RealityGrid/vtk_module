@@ -52,9 +52,9 @@ target_link_libraries(mini_viz
 )
 
 if(APPLE)
-  set(MACOSX_BUNDLE_INFO_STRING "2.5.0, (C) 2000-2009, The University of Manchester.")
-  set(MACOSX_BUNDLE_SHORT_VERSION_STRING "2.5.0")
-  set(MACOSX_BUNDLE_COPYRIGHT "(C) 2000-2009, University of Manchester.")
+  set(MACOSX_BUNDLE_INFO_STRING "${REGVTK_VERSION}, (c) 2002-2010, The University of Manchester.")
+  set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${REGVTK_VERSION}")
+  set(MACOSX_BUNDLE_COPYRIGHT "(c) 2002-2010, University of Manchester.")
 endif(APPLE)
 
 # install rules
