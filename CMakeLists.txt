@@ -1,7 +1,7 @@
 #
 #  The RealityGrid Steering Library VTK Data Reader
 #
-#  Copyright (c) 2002-2009, University of Manchester, United Kingdom.
+#  Copyright (c) 2002-2010, University of Manchester, United Kingdom.
 #  All rights reserved.
 #
 #  This software is produced by Research Computing Services, University
@@ -57,7 +57,7 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMake")
 set(REGVTK_VERSION_MAJ 3)
 set(REGVTK_VERSION_MIN 0)
 set(REGVTK_VERSION_PAT 0)
-set(REGVTK_VERSION 
+set(REGVTK_VERSION
     "${REGVTK_VERSION_MAJ}.${REGVTK_VERSION_MIN}.${REGVTK_VERSION_PAT}")
 
 # library version numbers
@@ -77,6 +77,7 @@ endif(NOT EXECUTABLE_OUTPUT_PATH)
 # need ReG
 find_package(RealityGrid REQUIRED)
 include(${RealityGrid_USE_FILE})
+reg_check_version("VTK Modules" ${REGVTK_VERSION_MAJ})
 
 # need VTK
 include(InitializeVTK)
