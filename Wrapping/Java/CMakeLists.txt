@@ -1,7 +1,7 @@
 #
 #  The RealityGrid Steering Library VTK Data Reader
 #
-#  Copyright (c) 2002-2009, University of Manchester, United Kingdom.
+#  Copyright (c) 2002-2010, University of Manchester, United Kingdom.
 #  All rights reserved.
 #
 #  This software is produced by Research Computing Services, University
@@ -72,5 +72,5 @@ add_dependencies(vtkRealityGrid vtkRealityGridSteeringJavaJavaClasses)
 
 # install it
 install(TARGETS vtkRealityGrid
-  ARCHIVE DESTINATION ${REGVTK_LIB_INSTALL}/java
+  ARCHIVE DESTINATION ${VTK_MODULES_LIB_INSTALL}/java
 )

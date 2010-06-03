@@ -1,7 +1,7 @@
 #
 #  The RealityGrid Steering Library VTK Data Reader
 #
-#  Copyright (c) 2002-2009, University of Manchester, United Kingdom.
+#  Copyright (c) 2002-2010, University of Manchester, United Kingdom.
 #  All rights reserved.
 #
 #  This software is produced by Research Computing Services, University
@@ -59,7 +59,6 @@ endif(APPLE)
 
 # install rules
 install(TARGETS mini_viz
-  RUNTIME DESTINATION ${REGVTK_BIN_INSTALL}
-  BUNDLE  DESTINATION ${REGVTK_BIN_INSTALL}
+  RUNTIME DESTINATION ${VTK_MODULES_BIN_INSTALL}
+  BUNDLE  DESTINATION ${VTK_MODULES_BIN_INSTALL}
 )
-
