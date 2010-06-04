@@ -52,6 +52,13 @@ which was used to install the Steering Library. This will ensure that
 the wrappers are installed to the same locations as the Steering
 Library.
 
+REGVTK_WRAP_JAVA   - default OFF
+REGVTK_WRAP_PYTHON - default OFF
+
+Set these options to ON to wrap the modules into other languages. Note
+that this relies on the version of VTK that you are building against
+to have support for these languages built in to it too.
+
 ----------------------------------------------------------------------
 
 Any comments, enquiries or pleas for explanation should be directed to
