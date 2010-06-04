@@ -61,6 +61,48 @@ to have support for these languages built in to it too.
 
 ----------------------------------------------------------------------
 
+Running the examples:
+
+The examples have been designed to accept data from mini_app supplied
+with the Steering Library.
+
+Assuming the use of direct (sockets-based) data transport, firstly
+you'll need to run mini_app and make a note of the port number that it
+says that it's outputting data on. Set the environment variables that
+will tell the visualization how to find mini_app:
+
+ * REG_CONNECTOR_HOSTNAME
+ * REG_CONNECTOR_PORT
+
+Make sure that the VTK and RealityGrid VTK Module libraries are in
+your library path.
+
+Cxx
+
+Simply run the mini_viz application from the bin directory of your
+build directory:
+
+$ ./bin/mini_viz
+
+Java
+
+Make sure the the VTK and RealityGrid VTK Module jar files are listed
+in your CLASSPATH. Compile and run the Java example:
+
+$ cd Examples/Java
+$ javac MiniViz.java
+$ java MiniViz
+
+Python
+
+Make sure that the VTK and RealityGrid VTK Module packages are listed
+in your PYTHONPATH. Run the example.
+
+$ cd Examples/Python
+$ python mini_viz.py
+
+----------------------------------------------------------------------
+
 Any comments, enquiries or pleas for explanation should be directed to
 the comp-steering mailing list.  Details available from:
 
