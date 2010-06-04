@@ -1,7 +1,7 @@
 #
 #  The RealityGrid Steering Library VTK Data Reader
 #
-#  Copyright (c) 2002-2009, University of Manchester, United Kingdom.
+#  Copyright (c) 2002-2010, University of Manchester, United Kingdom.
 #  All rights reserved.
 #
 #  This software is produced by Research Computing Services, University
@@ -58,7 +58,16 @@ if(WIN32)
   endif(NOT CYGWIN)
 endif(WIN32)
 
-# Run python on setup.py to install the python modules.
+# test for and create directory if required
+execute_process(COMMAND "${PYTHON_EXECUTABLE}" "-c" "from distutils.sysconfig import get_python_lib; import sys; sys.stdout.write\(get_python_lib\(prefix='${CMAKE_INSTALL_PREFIX}'\)\)"
+  OUTPUT_VARIABLE PY_INSTALL_DIR
+)
+file(MAKE_DIRECTORY ${PY_INSTALL_DIR})
+
+# set PYTHONPATH environment variable
+set(ENV{PYTHONPATH} $ENV{PYTHONPATH}:${PY_INSTALL_DIR})
+
+# Run setup.py to install the python modules.
 exec_program("${PYTHON_EXECUTABLE}" "${REGVTK_BINARY_DIR}/Wrapping/Python" ARGS
   "setup.py" "install" @REGVTK_PYTHON_SETUP_ARGS@
 )
