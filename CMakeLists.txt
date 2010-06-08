@@ -88,6 +88,12 @@ include(InitializeVTK)
 # if not building against a build tree install
 reg_setup_install_dirs("VTK_Modules")
 
+# set up the RealityGrid library link line
+#
+# if the Steering Library uses modules, this macro
+# does "the right thing"
+reg_link_modules()
+
 # common configuration settings
 configure_file(
   ${REGVTK_SOURCE_DIR}/vtkRealityGridConfigure.h.in
