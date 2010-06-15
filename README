@@ -96,6 +96,18 @@ build directory:
 
 $ ./bin/mini_viz
 
+On Mac OS X a bundle will be produced so you will need to run it with
+the 'open' command:
+
+$ open ./bin/MiniViz.app
+
+Or you can run the executable directly:
+
+$ ./bin/MiniViz.app/Contents/MacOS/MiniViz
+
+If you run MiniViz.app from Finder it will not pick up the required
+environment variables.
+
 Java
 
 Make sure the the VTK and RealityGrid VTK Module jar files are listed
