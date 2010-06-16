@@ -1,7 +1,7 @@
 #
 #  The RealityGrid Steering Library VTK Data Reader
 #
-#  Copyright (c) 2002-2009, University of Manchester, United Kingdom.
+#  Copyright (c) 2002-2010, University of Manchester, United Kingdom.
 #  All rights reserved.
 #
 #  This software is produced by Research Computing Services, University
@@ -57,7 +57,7 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMake")
 set(REGVTK_VERSION_MAJ 3)
 set(REGVTK_VERSION_MIN 0)
 set(REGVTK_VERSION_PAT 0)
-set(REGVTK_VERSION 
+set(REGVTK_VERSION
     "${REGVTK_VERSION_MAJ}.${REGVTK_VERSION_MIN}.${REGVTK_VERSION_PAT}")
 
 # library version numbers
@@ -77,6 +77,7 @@ endif(NOT EXECUTABLE_OUTPUT_PATH)
 # need ReG
 find_package(RealityGrid REQUIRED)
 include(${RealityGrid_USE_FILE})
+reg_check_version("VTK Modules" ${REGVTK_VERSION_MAJ})
 
 # need VTK
 include(InitializeVTK)
@@ -85,42 +86,13 @@ include(InitializeVTK)
 #
 # optionally install into the current ReG location
 # if not building against a build tree install
-if(${RealityGrid_INSTALL_TYPE} MATCHES "install")
-  option(REGVTK_INSTALL_TO_REG_DIR
-    "Install the VTK modules to the same location as the RealityGrid installation that they are being built for?"
-    OFF
-  )
-endif(${RealityGrid_INSTALL_TYPE} MATCHES "install")
+reg_setup_install_dirs("VTK_Modules")
 
-if(REGVTK_INSTALL_TO_REG_DIR)
-  set(CMAKE_INSTALL_PREFIX ${RealityGrid_INSTALL_PREFIX}
-    CACHE PATH
-    "Install path prefix, prepended onto install directories. The default setting is to install the VTK modules to the same location as the RealityGrid installation that they are being built for."
-    FORCE
-  )
-
-  string(
-    REPLACE "${RealityGrid_INSTALL_PREFIX}/" "" REGVTK_LIB_INSTALL
-    ${RealityGrid_LIBRARY_DIRS}
-  )
-  string(
-    REPLACE "${RealityGrid_INSTALL_PREFIX}/" "" REGVTK_INC_INSTALL
-    ${RealityGrid_INCLUDE_DIRS}
-  )
-  string(
-    REPLACE "${RealityGrid_INSTALL_PREFIX}/" "" REGVTK_BIN_INSTALL
-    ${RealityGrid_BIN_DIR}
-  )
-  string(
-    REPLACE "${RealityGrid_INSTALL_PREFIX}/" "" REGVTK_DOC_INSTALL
-    ${RealityGrid_DOCS_DIR}
-  )
-else(REGVTK_INSTALL_TO_REG_DIR)
-  set(REGVTK_LIB_INSTALL "lib/RealityGrid")
-  set(REGVTK_INC_INSTALL "include/RealityGrid")
-  set(REGVTK_BIN_INSTALL "bin")
-  set(REGVTK_DOC_INSTALL "share/doc/RealityGrid")
-endif(REGVTK_INSTALL_TO_REG_DIR)
+# set up the RealityGrid library link line
+#
+# if the Steering Library uses modules, this macro
+# does "the right thing"
+reg_link_modules()
 
 # common configuration settings
 configure_file(

@@ -52,6 +52,79 @@ which was used to install the Steering Library. This will ensure that
 the wrappers are installed to the same locations as the Steering
 Library.
 
+REGVTK_WRAP_JAVA   - default OFF
+REGVTK_WRAP_PYTHON - default OFF
+
+Set these options to ON to wrap the modules into other languages. Note
+that this relies on the version of VTK that you are building against
+to have support for these languages built in to it too.
+
+REG_USE_MODULE_Samples - default sockets
+
+Choose the transport over which sample data is moved. Current choices
+are sockets, files or proxy - Only available if the Steering Library
+has been built as a modular library.
+
+REG_USE_MODULE_Steering - default sockets
+
+Choose the transport which is used to pass steering messages. Current
+choices are sockets, wsrf or files - Only available if the Steering
+Library has been built as a modular library.
+
+----------------------------------------------------------------------
+
+Running the examples:
+
+The examples have been designed to accept data from mini_app supplied
+with the Steering Library.
+
+Assuming the use of direct (sockets-based) data transport, firstly
+you'll need to run mini_app and make a note of the port number that it
+says that it's outputting data on. Set the environment variables that
+will tell the visualization how to find mini_app:
+
+ * REG_CONNECTOR_HOSTNAME
+ * REG_CONNECTOR_PORT
+
+Make sure that the VTK and RealityGrid VTK Module libraries are in
+your library path.
+
+Cxx
+
+Simply run the mini_viz application from the bin directory of your
+build directory:
+
+$ ./bin/mini_viz
+
+On Mac OS X a bundle will be produced so you will need to run it with
+the 'open' command:
+
+$ open ./bin/MiniViz.app
+
+Or you can run the executable directly:
+
+$ ./bin/MiniViz.app/Contents/MacOS/MiniViz
+
+If you run MiniViz.app from Finder it will not pick up the required
+environment variables.
+
+Java
+
+Make sure the the VTK and RealityGrid VTK Module jar files are listed
+in your CLASSPATH. Compile and run the Java example:
+
+$ cd Examples/Java
+$ javac MiniViz.java
+$ java MiniViz
+
+Python
+
+Make sure that the VTK and RealityGrid VTK Module packages are listed
+in your PYTHONPATH. Run the example.
+
+$ cd Examples/Python
+$ python mini_viz.py
+
 ----------------------------------------------------------------------
 
 Any comments, enquiries or pleas for explanation should be directed to

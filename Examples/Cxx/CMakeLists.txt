@@ -1,7 +1,7 @@
 #
 #  The RealityGrid Steering Library VTK Data Reader
 #
-#  Copyright (c) 2002-2009, University of Manchester, United Kingdom.
+#  Copyright (c) 2002-2010, University of Manchester, United Kingdom.
 #  All rights reserved.
 #
 #  This software is produced by Research Computing Services, University
@@ -44,22 +44,39 @@
 #
 #  Author: Robert Haines
 
-add_executable(mini_viz MACOSX_BUNDLE mini_viz.cxx)
-target_link_libraries(mini_viz
+set(mini_SRCS mini_viz.cxx)
+
+# add some platform specific stuff
+set(GUI_TYPE)
+set(EXE_NAME mini_viz)
+if(APPLE)
+  # set gui type and app name
+  set(GUI_TYPE MACOSX_BUNDLE)
+  set(EXE_NAME MiniViz)
+
+  # add icons to the build
+  set(mini_ICNS ${PROJECT_SOURCE_DIR}/Resources/realitygrid.icns)
+  set(mini_SRCS ${mini_SRCS} ${mini_ICNS})
+  set(MACOSX_BUNDLE_ICON_FILE ${mini_ICNS})
+  set_source_files_properties(${mini_ICNS}
+    PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+
+  # set bundle info strings
+  set(MACOSX_BUNDLE_INFO_STRING "${REGVTK_VERSION}, (c) 2002-2010, The University of Manchester, UK.")
+  set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${REGVTK_VERSION}")
+  set(MACOSX_BUNDLE_COPYRIGHT "(c) 2002-2010, University of Manchester, UK.")
+endif(APPLE)
+
+# build the executable
+add_executable(${EXE_NAME} ${GUI_TYPE} ${mini_SRCS})
+target_link_libraries(${EXE_NAME}
   vtkRealityGridSteering
   vtkRendering
   vtkFiltering
 )
 
-if(APPLE)
-  set(MACOSX_BUNDLE_INFO_STRING "2.5.0, (C) 2000-2009, The University of Manchester.")
-  set(MACOSX_BUNDLE_SHORT_VERSION_STRING "2.5.0")
-  set(MACOSX_BUNDLE_COPYRIGHT "(C) 2000-2009, University of Manchester.")
-endif(APPLE)
-
 # install rules
-install(TARGETS mini_viz
-  RUNTIME DESTINATION ${REGVTK_BIN_INSTALL}
-  BUNDLE  DESTINATION ${REGVTK_BIN_INSTALL}
+install(TARGETS ${EXE_NAME}
+  RUNTIME DESTINATION ${VTK_MODULES_BIN_INSTALL}
+  BUNDLE  DESTINATION ${VTK_MODULES_BIN_INSTALL}
 )
-

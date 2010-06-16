@@ -2,7 +2,7 @@
 #
 #  The RealityGrid Steering Library VTK Data Reader
 #
-#  Copyright (c) 2002-2009, University of Manchester, United Kingdom.
+#  Copyright (c) 2002-2010, University of Manchester, United Kingdom.
 #  All rights reserved.
 #
 #  This software is produced by Research Computing Services, University
@@ -67,21 +67,24 @@ regvtk_lib_dir = "@LIBRARY_OUTPUT_PATH@"
 
 regvtk_lib_install = 'RealityGrid/vtk'
 
-if os.name == 'posix':
-    dir = regvtk_lib_dir
-    prefix = 'libvtkRealityGrid'
-    suffix = 'Python' + get_config_var('SO')
-else:
-    dir = regvtk_lib_dir.replace('/', '\\')
-    prefix = 'vtkRealityGrid'
-    suffix = 'Python.pyd'
-    regvtk_lib_install.replace('/', '\\')
+def get_libs():
+    """Returns a list of libraries to be installed.  """
+    libs = []
 
-regvtk_libs = [os.path.abspath(os.path.join(dir, prefix+'Steering'+suffix))]
+    # Select platform-specific components of the module file names.
+    if os.name == 'posix':
+        dir = regvtk_lib_dir
+        prefix = 'libvtkRealityGrid'
+        suffix = 'Python' + get_config_var('SO')
+    else:
+        dir = regvtk_lib_dir.replace('/', '\\')
+        prefix = 'vtkRealityGrid'
+        suffix = 'Python.pyd'
+        regvtk_lib_install.replace('/', '\\')
 
-# needed for older pythons
-def mk_dict(**kw):
-    return kw
+    libs.append(os.path.abspath(os.path.join(dir, prefix+'Steering'+suffix)))
+
+    return libs
 
 class my_install_data (install_data):
     def finalize_options (self):
@@ -92,22 +95,31 @@ class my_install_data (install_data):
                                    ('force', 'force'),
                                    )
 
-opts = mk_dict(name             = "RealityGrid VTK Modules",
-               version          = regvtk_version,
-               description      = "The RealityGrid Steering Library VTK Modules",
-               author           = "Robert Haines, Stephen Pickles, Robin Pinning, Andrew Porter",
-               author_email     = "rhaines@manchester.ac.uk",
-               maintainer       = "Robert Haines, University of Manchester",
-               maintainer_email = "comp-steering@listserv.manchester.ac.uk",
-               long_description = "VTK Modules that provide the functionality to read live data from a RealityGrid enabled application.",
-               url              = "http://www.realitygrid.org/",
-               platforms        = ['Any'],
-               cmdclass         = {'install_data': my_install_data},
-               packages         = ['RealityGrid', 'RealityGrid.vtk'],
-               data_files       = [(regvtk_lib_install, regvtk_libs)],
-               )
+if __name__ == '__main__':
+    # needed for older pythons
+    def mk_dict(**kw):
+        return kw
 
-if has_setup_tools:
-    opts['zip_safe'] = 0
+    # setup options
+    opts = mk_dict(name             = "RealityGrid VTK Modules",
+                   version          = regvtk_version,
+                   description      = "The RealityGrid Steering Library VTK Modules",
+                   author           = "Robert Haines",
+                   author_email     = "rhaines@manchester.ac.uk",
+                   maintainer       = "Robert Haines, University of Manchester",
+                   maintainer_email = "comp-steering@listserv.manchester.ac.uk",
+                   long_description = "VTK Modules that provide the functionality to read live data from a RealityGrid enabled application.",
+                   url              = "http://code.google.com/p/computational-steering/",
+                   license          = "BSD",
+                   platforms        = ['Any'],
+                   cmdclass         = {'install_data': my_install_data},
+                   packages         = ['RealityGrid', 'RealityGrid.vtk'],
+                   data_files       = [(regvtk_lib_install, get_libs())],
+                   )
 
-setup(**opts)
+    # don't create zip file
+    if has_setup_tools:
+        opts['zip_safe'] = 0
+
+    # run setup
+    setup(**opts)

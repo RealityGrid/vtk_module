@@ -1,7 +1,7 @@
 #
 #  The RealityGrid Steering Library VTK Data Reader
 #
-#  Copyright (c) 2002-2009, University of Manchester, United Kingdom.
+#  Copyright (c) 2002-2010, University of Manchester, United Kingdom.
 #  All rights reserved.
 #
 #  This software is produced by Research Computing Services, University
@@ -83,7 +83,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 # Create the vtkRealityGridSteering C++ library.
 add_library(vtkRealityGridSteering ${Steering_SRCS})
-target_link_libraries(vtkRealityGridSteering 
+target_link_libraries(vtkRealityGridSteering
   ${REG_LINK_LIBRARIES}
   ${REG_EXTERNAL_LIBS}
   vtkCommon
@@ -135,8 +135,8 @@ set_target_properties(${Steering_INSTALL_TARGETS}
 
 # install rules
 install(TARGETS ${Steering_INSTALL_TARGETS}
-  LIBRARY DESTINATION ${REGVTK_LIB_INSTALL}
+  LIBRARY DESTINATION ${VTK_MODULES_LIB_INSTALL}
 )
 install(FILES ${Steering_INCS}
-  DESTINATION ${REGVTK_INC_INSTALL}
+  DESTINATION ${VTK_MODULES_INC_INSTALL}/vtk
 )
