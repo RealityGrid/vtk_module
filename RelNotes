@@ -1,6 +1,23 @@
 Release Notes for the RealityGrid Steering Library VTK Data Reader
 ------------------------------------------------------------------
 
+Version 3.5.0
+-------------
+
+ * Update the code to install the python modules.
+ * Added a short section to the README about the wrapping options.
+ * Added a short section to the README about how to run the examples.
+ * Added a short section to the README about linking modules.
+ * Examples: Create a bundle on Mac OS X.
+
+ Internal changes
+ ----------------
+
+ * Use new macro provided by steer_lib to check version numbers.
+ * Use new macro provided by steer_lib to set install location.
+ * Use new macro provided by steer_lib to setup the link line correctly.
+ * Hide the Java executables during build.
+
 Version 3.0.0
 -------------
 
